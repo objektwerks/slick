@@ -5,10 +5,6 @@ version := "1.0"
 scalaVersion := "2.11.7"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
-resolvers ++= Seq(
-  "Scalaz Bintray" at "http://dl.bintray.com/scalaz/releases"
-)
-
 libraryDependencies ++= {
   Seq(
     "com.typesafe.slick" % "slick_2.11" % "3.0.0",
