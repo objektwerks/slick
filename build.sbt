@@ -7,7 +7,7 @@ ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 libraryDependencies ++= {
   Seq(
-    "com.typesafe.slick" % "slick_2.11" % "3.0.0",
+    "com.typesafe.slick" % "slick_2.11" % "3.1.0",
     "com.typesafe" % "config" % "1.3.0",
     "com.h2database" % "h2" % "1.4.187",
     "ch.qos.logback" % "logback-classic" % "1.1.3",
