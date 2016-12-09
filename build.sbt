@@ -1,27 +1,31 @@
-name := "objektwerks.slick"
+name := "slick"
+organization := "objketwerks"
 version := "1.0"
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 libraryDependencies ++= {
   Seq(
-    "com.typesafe.slick" % "slick_2.11" % "3.1.1",
-    "com.typesafe" % "config" % "1.3.0",
-    "com.h2database" % "h2" % "1.4.187",
-    "ch.qos.logback" % "logback-classic" % "1.1.3",
-    "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test"
+    "com.typesafe.slick" % "slick_2.12" % "3.2.0-M2",
+    "com.typesafe" % "config" % "1.3.1",
+    "com.h2database" % "h2" % "1.4.193",
+    "ch.qos.logback" % "logback-classic" % "1.1.7",
+    "org.scalatest" % "scalatest_2.12" % "3.0.1" % "test"
   )
 }
 scalacOptions ++= Seq(
   "-language:postfixOps",
-  "-language:implicitConversions",
   "-language:reflectiveCalls",
+  "-language:implicitConversions",
   "-language:higherKinds",
   "-feature",
+  "-Ywarn-unused-import",
+  "-Ywarn-unused",
+  "-Ywarn-dead-code",
   "-unchecked",
   "-deprecation",
-  "-Xlint",
-  "-Xfatal-warnings"
+  "-Xfatal-warnings",
+  "-Xlint:missing-interpolator",
+  "-Xlint"
 )
 fork in test := true
 javaOptions += "-server -Xss1m -Xmx2g"
-logLevel := Level.Info
