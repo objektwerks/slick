@@ -1,6 +1,6 @@
 name := "slick"
 organization := "objketwerks"
-version := "1.0"
+version := "0.1-SNAPSHOT"
 scalaVersion := "2.12.1"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 libraryDependencies ++= {
