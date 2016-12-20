@@ -1,3 +1,3 @@
 Slick
 -----
->The purpose of this project is to prototype and test Slick features.
+>The purpose of this project is to test Slick features.
