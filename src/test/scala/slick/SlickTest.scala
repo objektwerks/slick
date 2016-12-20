@@ -2,21 +2,19 @@ package slick
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext}
 
 class SlickTest extends FunSuite with BeforeAndAfterAll {
-  private implicit val ec = ExecutionContext.global
-
   override protected def beforeAll(): Unit = {
     super.beforeAll
-    Store.createSchema
+    Store.createSchema()
   }
 
   override protected def afterAll(): Unit = {
     super.afterAll
-    Store.dropSchema
-    Store.close
+    Store.dropSchema()
+    Store.close()
   }
 
   test("insert person") {

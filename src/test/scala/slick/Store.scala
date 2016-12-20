@@ -3,13 +3,12 @@ package slick
 import slick.driver.H2Driver.api._
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, Future}
 
 object Store {
   private[this] val persons = TableQuery[Persons]
   private[this] val tasks = TableQuery[Tasks]
   private[this] val db = Database.forConfig("slick")
-  private implicit val ec = ExecutionContext.global
 
 
   def createSchema(): Unit = {
@@ -48,13 +47,5 @@ object Store {
 
   def insert(task: Task): Future[Int] = {
     db.run( (tasks returning tasks.map(_.id)) forceInsert task )
-  }
-
-  private[this] def filter(person: Person): Query[Persons, Person, Seq] = {
-    persons.filter(person => person.id === person.id)
-  }
-
-  private[this] def filter(task: Task): Query[Tasks, Task, Seq] = {
-    tasks.filter(task => task.id === task.id)
   }
 }
