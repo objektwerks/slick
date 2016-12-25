@@ -28,27 +28,27 @@ object Store {
   }
 
   def listPersons: Future[Seq[Person]] = {
-    val query = for { p <- persons } yield p
-    db.run(query.result)
+    val action = for { p <- persons } yield p
+    db.run(action.result)
   }
 
   def listTasks(person: Person): Future[Seq[Task]] = {
-    val query = for { t <- tasks if t.id === person.id } yield t
-    db.run(query.result)
+    val action = for { t <- tasks if t.id === person.id } yield t
+    db.run(action.result)
   }
 
   def findPerson(name: String): Future[Person] = {
-    val query = persons.filter(_.name === name).result.head
-    db.run(query)
+    val action = persons.filter(_.name === name).result.head
+    db.run(action)
   }
 
-  def insert(person: Person): Future[Int] = {
-    val query = persons += person
-    db.run(query)
+  def upsert(person: Person): Future[Int] = {
+    val action = persons.insertOrUpdate(person)
+    db.run(action)
   }
 
-  def insert(task: Task): Future[Int] = {
-    val query = tasks += task
-    db.run(query)
+  def upsert(task: Task): Future[Int] = {
+    val action = tasks.insertOrUpdate(task)
+    db.run(action)
   }
 }
