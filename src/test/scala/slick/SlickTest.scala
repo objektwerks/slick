@@ -1,20 +1,22 @@
 package slick
 
+import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-import slick.Store._
-
 class SlickTest extends FunSuite with BeforeAndAfterAll {
+  val store = new Store(ConfigFactory.load("test.conf"), "test")
+  import store._
+
   override protected def beforeAll(): Unit = {
-    createSchema()
+    store.createSchema()
   }
 
   override protected def afterAll(): Unit = {
-    dropSchema()
-    close()
+    store.dropSchema()
+    store.close()
   }
 
   test("insert person") {
