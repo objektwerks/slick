@@ -1,12 +1,13 @@
 package slick
 
+import com.typesafe.config.ConfigFactory
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 object Store extends Repository {
-  val db = Database.forConfig("test")
+  val db = Database.forConfig("test", ConfigFactory.load("test.conf"))
 
   def createSchema(): Unit = {
     val schema = (persons.schema ++ tasks.schema).create
