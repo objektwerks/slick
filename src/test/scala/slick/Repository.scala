@@ -5,6 +5,7 @@ import slick.jdbc.H2Profile.api._
 trait Repository {
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
+  val schema = persons.schema ++ tasks.schema
 
   def listPersons = ( for { p <- persons } yield p ).result
   def listTasks(person: Person) = ( for { t <- tasks if t.id === person.id } yield t ).result
