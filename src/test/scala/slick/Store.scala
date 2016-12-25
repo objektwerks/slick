@@ -43,12 +43,12 @@ object Store {
   }
 
   def insert(person: Person): Future[Int] = {
-    val query = (persons returning persons.map(_.id)) forceInsert person
+    val query = persons += person
     db.run(query)
   }
 
   def insert(task: Task): Future[Int] = {
-    val query = (tasks returning tasks.map(_.id)) forceInsert task
+    val query = tasks += task
     db.run(query)
   }
 }
