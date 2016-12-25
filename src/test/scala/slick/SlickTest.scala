@@ -11,12 +11,12 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
   import store._
 
   override protected def beforeAll(): Unit = {
-    store.createSchema()
+    createSchema()
   }
 
   override protected def afterAll(): Unit = {
-    store.dropSchema()
-    store.close()
+    dropSchema()
+    close()
   }
 
   test("insert person") {
