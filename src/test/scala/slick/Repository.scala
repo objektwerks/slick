@@ -2,7 +2,7 @@ package slick
 
 import slick.driver.H2Driver.api._
 
-case class Person(var id: Option[Int] = None, name: String)
+case class Person(id: Option[Int] = None, name: String)
 
 class Persons(tag: Tag) extends Table[Person](tag, "persons") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -10,7 +10,7 @@ class Persons(tag: Tag) extends Table[Person](tag, "persons") {
   def * = (id.?, name) <> (Person.tupled, Person.unapply)
 }
 
-case class Task(var id: Option[Int] = None, personId: Int, task: String)
+case class Task(id: Option[Int] = None, personId: Int, task: String)
 
 class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)

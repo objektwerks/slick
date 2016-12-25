@@ -6,9 +6,9 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 object Store {
-  private[this] val persons = TableQuery[Persons]
-  private[this] val tasks = TableQuery[Tasks]
-  private[this] val db = Database.forConfig("slick")
+  private val persons = TableQuery[Persons]
+  private val tasks = TableQuery[Tasks]
+  private val db = Database.forConfig("test")
 
 
   def createSchema(): Unit = {
