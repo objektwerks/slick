@@ -5,23 +5,23 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
+import slick.Store._
+
 class SlickTest extends FunSuite with BeforeAndAfterAll {
   override protected def beforeAll(): Unit = {
-    super.beforeAll
-    Store.createSchema()
+    createSchema()
   }
 
   override protected def afterAll(): Unit = {
-    super.afterAll
-    Store.dropSchema()
-    Store.close()
+    dropSchema()
+    close()
   }
 
   test("insert person") {
     val fred = Person(name = "fred")
     val barney = Person(name = "barney")
-    val futureFred = Store.upsert(fred)
-    val futureBarney = Store.upsert(barney)
+    val futureFred = db.run(upsert(fred))
+    val futureBarney = db.run(upsert(barney))
     val fredId = Await.ready(futureFred, Duration.Inf).value.get.get
     val barneyId = Await.ready(futureBarney, Duration.Inf).value.get.get
     println(s"Fred inserted autoinc id: $fredId")
@@ -31,12 +31,12 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("insert task") {
-    val futureFred = Store.findPerson("fred")
-    val futureBarney = Store.findPerson("barney")
+    val futureFred = db.run(findPerson("fred"))
+    val futureBarney = db.run(findPerson("barney"))
     val fred = Await.ready(futureFred, Duration.Inf).value.get.get
     val barney = Await.ready(futureBarney, Duration.Inf).value.get.get
-    val futureFredTask = Store.upsert(Task(personId = fred.id.get, task = "Mow yard."))
-    val futureBarneyTask = Store.upsert(Task(personId = barney.id.get, task = "Clean pool."))
+    val futureFredTask = db.run(upsert(Task(personId = fred.id.get, task = "Mow yard.")))
+    val futureBarneyTask = db.run(upsert(Task(personId = barney.id.get, task = "Clean pool.")))
     val fredTaskId = Await.ready(futureFredTask, Duration.Inf).value.get.get
     val barneyTaskId = Await.ready(futureBarneyTask, Duration.Inf).value.get.get
     println(s"Fred inserted task autoinc id: $fredTaskId")
@@ -46,12 +46,12 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("list persons and tasks") {
-    val futurePersons = Store.listPersons
+    val futurePersons = db.run(listPersons)
     val persons = Await.ready(futurePersons, Duration.Inf).value.get.get
     assert(persons.size == 2)
     for (p <- persons) {
       println(p)
-      val futureTasks = Store.listTasks(p)
+      val futureTasks = db.run(listTasks(p))
       val tasks = Await.ready(futureTasks, Duration.Inf).value.get.get
       assert(tasks.size == 1)
       for (t <- tasks) {
