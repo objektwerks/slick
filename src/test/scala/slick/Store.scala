@@ -38,14 +38,17 @@ object Store {
   }
 
   def findPerson(name: String): Future[Person] = {
-    db.run(persons.filter(_.name === name).result.head)
+    val query = persons.filter(_.name === name).result.head
+    db.run(query)
   }
 
   def insert(person: Person): Future[Int] = {
-    db.run( (persons returning persons.map(_.id)) forceInsert person )
+    val query = (persons returning persons.map(_.id)) forceInsert person
+    db.run(query)
   }
 
   def insert(task: Task): Future[Int] = {
-    db.run( (tasks returning tasks.map(_.id)) forceInsert task )
+    val query = (tasks returning tasks.map(_.id)) forceInsert task
+    db.run(query)
   }
 }
