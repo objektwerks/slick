@@ -3,13 +3,13 @@ package slick
 import com.typesafe.config.Config
 import slick.jdbc.H2Profile.api._
 
-class Repository(conf: Config, database: String) {
+class Repository(path: String, config: Config) {
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
   val schema = persons.schema ++ tasks.schema
   val createSchema = DBIO.seq(schema.create)
   val dropSchema = DBIO.seq(schema.drop)
-  val db = Database.forConfig(database, conf)
+  val db = Database.forConfig(path, config)
 
   def upsert(person: Person) = persons.insertOrUpdate(person)
   def upsert(task: Task) = tasks.insertOrUpdate(task)
@@ -29,9 +29,9 @@ class Repository(conf: Config, database: String) {
 
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def person_id = column[Int]("person_id")
+    def personId = column[Int]("person_id")
     def task = column[String]("task")
-    def * = (id.?, person_id, task) <> (Task.tupled, Task.unapply)
-    def person = foreignKey("person_fk", person_id, TableQuery[Persons])(_.id)
+    def * = (id.?, personId, task) <> (Task.tupled, Task.unapply)
+    def person = foreignKey("person_fk", personId, TableQuery[Persons])(_.id)
   }
 }

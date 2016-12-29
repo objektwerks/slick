@@ -7,7 +7,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class SlickTest extends FunSuite with BeforeAndAfterAll with Matchers {
-  val respository = new Repository(ConfigFactory.load("test.conf"), "test")
+  val respository = new Repository(path = "test", config = ConfigFactory.load("test.conf"))
   import respository._
 
   override protected def beforeAll(): Unit = Await.result(db.run(createSchema), 1 second)
