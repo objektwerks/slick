@@ -10,10 +10,10 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
   val respository = new Repository(ConfigFactory.load("test.conf"), "test")
   import respository._
 
-  override protected def beforeAll(): Unit = Await.ready(db.run(createSchema), 2 seconds)
+  override protected def beforeAll(): Unit = Await.ready(db.run(createSchema), 1 second)
 
   override protected def afterAll(): Unit = {
-    Await.ready(db.run(dropSchema), 2 seconds)
+    Await.ready(db.run(dropSchema), 1 second)
     db.close()
   }
 
