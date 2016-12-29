@@ -17,31 +17,23 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
     db.close()
   }
 
-  test("upsert person") {
+  test("person > task") {
     Await.result(db.run(upsert(Person(name = "fred"))), 1 second)
     Await.result(db.run(upsert(Person(name = "barney"))), 1 second)
-  }
 
-  test("find person > upsert task") {
     val fred = Await.result(db.run(findPerson("fred")), 1 second)
     val barney = Await.result(db.run(findPerson("barney")), 1 second)
 
     Await.result(db.run(upsert(Task(personId = fred.id.get, task = "Mow yard."))), 1 second)
     Await.result(db.run(upsert(Task(personId = barney.id.get, task = "Clean pool."))), 1 second)
-  }
 
-  test("list persons and tasks") {
-    val futurePersons = db.run(listPersons)
-    val persons = Await.result(futurePersons, 1 second)
+    val persons = Await.result(db.run(listPersons), 1 second)
     assert(persons.size == 2)
-    for (p <- persons) {
-      println(p)
-      val futureTasks = db.run(listTasks(p))
-      val tasks = Await.result(futureTasks, 1 second)
+    persons foreach println
+    persons foreach { p =>
+      val tasks = Await.result(db.run(listTasks(p)), 1 second)
       assert(tasks.size == 1)
-      for (t <- tasks) {
-        println(s"\t$t")
-      }
+      tasks foreach println
     }
   }
 }
