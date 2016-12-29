@@ -11,11 +11,11 @@ class Repository(conf: Config, database: String) {
   val dropSchema = DBIO.seq(schema.drop)
   val db = Database.forConfig(database, conf)
 
-  def listPersons = ( for { p <- persons } yield p ).result
-  def listTasks(person: Person) = ( for { t <- tasks if t.id === person.id } yield t ).result
-  def findPerson(name: String) = persons.filter(_.name === name).result.head
   def upsert(person: Person) = persons.insertOrUpdate(person)
   def upsert(task: Task) = tasks.insertOrUpdate(task)
+  def findPerson(name: String) = persons.filter(_.name === name).result.head
+  def listPersons = ( for { p <- persons } yield p ).result
+  def listTasks(person: Person) = ( for { t <- tasks if t.id === person.id } yield t ).result
 
   case class Person(id: Option[Int] = None, name: String)
 
