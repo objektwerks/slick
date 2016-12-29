@@ -25,20 +25,11 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
     val fred = Person(name = "fred")
     val barney = Person(name = "barney")
 
-    val futureFred = db.run(upsert(fred))
-    val futureBarney = db.run(upsert(barney))
-
-    val fredId = Await.ready(futureFred, 3 seconds).value.get.get
-    val barneyId = Await.ready(futureBarney, 3 seconds).value.get.get
-
-    println(s"Fred inserted autoinc id: $fredId")
-    println(s"Barney inserted autoinc id: $barneyId")
-
-    assert(fredId > 0)
-    assert(barneyId > 0)
+    Await.ready(db.run(upsert(fred)), 3 seconds)
+    Await.ready(db.run(upsert(barney)), 3 seconds)
   }
 
-  test("upsert task") {
+  test("find person > upsert task") {
     val futureFred = db.run(findPerson("fred"))
     val futureBarney = db.run(findPerson("barney"))
 
@@ -48,14 +39,8 @@ class SlickTest extends FunSuite with BeforeAndAfterAll {
     val futureFredTask = db.run(upsert(Task(personId = fred.id.get, task = "Mow yard.")))
     val futureBarneyTask = db.run(upsert(Task(personId = barney.id.get, task = "Clean pool.")))
 
-    val fredTaskId = Await.ready(futureFredTask, 3 seconds).value.get.get
-    val barneyTaskId = Await.ready(futureBarneyTask, 3 seconds).value.get.get
-
-    println(s"Fred inserted task autoinc id: $fredTaskId")
-    println(s"Barney inserted task autoinc id: $barneyTaskId")
-
-    assert(fredTaskId > 0)
-    assert(barneyTaskId > 0)
+    Await.ready(futureFredTask, 3 seconds)
+    Await.ready(futureBarneyTask, 3 seconds)
   }
 
   test("list persons and tasks") {
