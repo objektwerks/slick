@@ -3,28 +3,13 @@ package slick
 import com.typesafe.config.Config
 import slick.jdbc.H2Profile.api._
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-
 class Repository(conf: Config, database: String) {
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
   val schema = persons.schema ++ tasks.schema
+  val createSchema = DBIO.seq(schema.create)
+  val dropSchema = DBIO.seq(schema.drop)
   val db = Database.forConfig(database, conf)
-
-  def createSchema(): Unit = {
-    val ddl = DBIO.seq(schema.create)
-    val future = db.run(ddl)
-    Await.ready(future, Duration.Inf)
-  }
-
-  def dropSchema(): Unit = {
-    val ddl = DBIO.seq(schema.drop)
-    val future = db.run(ddl)
-    Await.ready(future, Duration.Inf)
-  }
-
-  def close(): Unit = db.close()
 
   def listPersons = ( for { p <- persons } yield p ).result
   def listTasks(person: Person) = ( for { t <- tasks if t.id === person.id } yield t ).result
