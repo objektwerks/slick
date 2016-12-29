@@ -7,8 +7,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 class SlickTest extends FunSuite with BeforeAndAfterAll {
-  val store = new Store(ConfigFactory.load("test.conf"), "test")
-  import store._
+  val respository = new Repository(ConfigFactory.load("test.conf"), "test")
+  import respository._
 
   override protected def beforeAll(): Unit = {
     createSchema()
