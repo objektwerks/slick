@@ -6,7 +6,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class SlickTest extends FunSuite with BeforeAndAfterAll with Matchers {
+class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   val respository = new Repository(path = "test", config = ConfigFactory.load("test.conf"))
   import respository._
 
