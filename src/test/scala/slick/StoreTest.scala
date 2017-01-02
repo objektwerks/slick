@@ -6,9 +6,9 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
-  val respository = new Repository(path = "test", config = ConfigFactory.load("test.conf"))
-  import respository._
+class StoreTest extends FunSuite with BeforeAndAfterAll with Matchers {
+  val store = new Store(path = "test", config = ConfigFactory.load("test.conf")) with Repository
+  import store._
 
   override protected def beforeAll(): Unit = Await.result(db.run(createSchema), 1 second)
 

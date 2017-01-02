@@ -2,16 +2,14 @@ package slick
 
 import java.sql.Timestamp
 
-import com.typesafe.config.Config
 import slick.jdbc.H2Profile.api._
 
-class Repository(path: String, config: Config) {
+trait Repository {
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
   val schema = persons.schema ++ tasks.schema
   val createSchema = DBIO.seq(schema.create)
   val dropSchema = DBIO.seq(schema.drop)
-  val db = Database.forConfig(path, config)
 
   def upsert(person: Person) = persons.insertOrUpdate(person)
   def upsert(task: Task) = tasks.insertOrUpdate(task)
