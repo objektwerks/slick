@@ -15,7 +15,7 @@ class Repository(path: String, config: Config) {
   def upsert(task: Task) = tasks.insertOrUpdate(task)
   def findPerson(name: String) = persons.filter(_.name === name).result.head
   def listPersons = persons.result
-  def listTasks(person: Person) = ( for { t <- tasks if t.id === person.id } yield t ).result
+  def listTasks(person: Person) = tasks.filter(_.id === person.id).result   // ( for { t <- tasks if t.id === person.id } yield t ).result
 
   case class Person(id: Option[Int] = None, name: String)
 
