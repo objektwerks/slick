@@ -2,7 +2,7 @@
 <configuration>
     <timestamp key="timeStamp" datePattern="yyyyMMdd'T'HHmm"/>
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>./target/output/logs/test.log.${timeStamp}.txt</file>
+        <file>./target/test.log.${timeStamp}.txt</file>
         <append>true</append>
         <encoder>
             <pattern>%-5p: %d{ISO8601} [%t] %m%n</pattern>
