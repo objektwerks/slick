@@ -19,22 +19,26 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     close()
   }
 
-  test("person > task") {
+  test("add") {
     val barneyId = Await.result(addPerson("barney"), 1 second)
     val fredId = Await.result(addPerson("fred"), 1 second)
     barneyId shouldBe 1
     fredId shouldBe 2
 
-    val barney = Await.result(findPerson("barney"), 1 second)
-    val fred = Await.result(findPerson("fred"), 1 second)
-    barney.id shouldBe Some(1)
-    fred.id shouldBe Some(2)
-
     val barneyTaskId = Await.result(addTask(barneyId, "clean pool"), 1 second)
     val fredTaskId = Await.result(addTask(fredId, "mow yard"), 1 second)
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
+  }
 
+  test("find") {
+    val barney = Await.result(findPerson("barney"), 1 second)
+    val fred = Await.result(findPerson("fred"), 1 second)
+    barney.id shouldBe Some(1)
+    fred.id shouldBe Some(2)
+  }
+
+  test("list") {
     val persons = Await.result(listPersons(), 1 second)
     persons.size shouldBe 2
     persons foreach { p =>
