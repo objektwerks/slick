@@ -1,5 +1,7 @@
 package slick
 
+import java.time.LocalDateTime
+
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
@@ -32,7 +34,11 @@ class StoreTest extends FunSuite with BeforeAndAfterAll with Matchers {
     persons foreach { p =>
       val tasks = Await.result(db.run(listTasks(p)), 1 second)
       tasks.size shouldBe 1
-      tasks foreach println
+      tasks foreach { t =>
+        val completedTask = t.copy(completed = Some(LocalDateTime.now))
+        Await.result(db.run(upsert(completedTask)), 1 second)
+        println(completedTask)
+      }
     }
   }
 }
