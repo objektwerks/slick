@@ -6,26 +6,31 @@ import java.time.LocalDateTime
 import com.typesafe.config.Config
 import slick.jdbc.H2Profile.api._
 
-import scala.concurrent.ExecutionContext
-
 class Repository(path: String, config: Config) {
-  implicit val ec = ExecutionContext.Implicits.global
-  implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
-  val persons = TableQuery[Persons]
-  val tasks = TableQuery[Tasks]
-  val schema = persons.schema ++ tasks.schema
-  val db = Database.forConfig(path, config)
+  private implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
+  private val persons = TableQuery[Persons]
+  private val tasks = TableQuery[Tasks]
+  private val schema = persons.schema ++ tasks.schema
+  private val db = Database.forConfig(path, config)
 
   def createSchema() = db.run(DBIO.seq(schema.create))
+
   def dropSchema() = db.run(DBIO.seq(schema.drop))
+
   def close() = db.close()
 
   def addPerson(name: String) = db.run((persons returning persons.map(_.id)) += Person(name = name))
+
   def addTask(personId: Int, task: String) = db.run((tasks returning tasks.map(_.id)) += Task(personId = personId, task = task))
+
   def updateTask(task: Task) = db.run(tasks.insertOrUpdate(task))
+
   def findPerson(name: String) = db.run(persons.filter(_.name === name).result.head)
+
   def listPersons() = db.run(persons.sortBy(_.name.asc).result)
+
   def listTasks(person: Person) = db.run(tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result)
+
   def listPersonsTasks() = {
     val query = for {
       p <- persons
