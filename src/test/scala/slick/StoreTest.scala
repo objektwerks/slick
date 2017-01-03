@@ -20,7 +20,7 @@ class StoreTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("person > task") {
-    Await.result(db.run(upsert(Person(name = "fred")) andThen upsert(Person(name = "barney"))), 1 second)
+    Await.result(db.run(upsert(Person(name = "barney")) andThen upsert(Person(name = "fred"))), 1 second)
 
     val barney = Await.result(db.run(findPerson("barney")), 1 second)
     val fred = Await.result(db.run(findPerson("fred")), 1 second)
