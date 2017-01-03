@@ -16,12 +16,13 @@ trait Repository {
   val createSchema = DBIO.seq(schema.create)
   val dropSchema = DBIO.seq(schema.drop)
 
-  def upsert(person: Person) = persons.insertOrUpdate(person)
-  def upsert(task: Task) = tasks.insertOrUpdate(task)
+  def addPerson(name: String) = (persons returning persons.map(_.id)) += Person(name = name)
+  def addTask(personId: Int, task: String) = (tasks returning tasks.map(_.id)) += Task(personId = personId, task = task)
+  def updateTask(task: Task) = tasks.insertOrUpdate(task)
   def findPerson(name: String) = persons.filter(_.name === name).result.head
   def listPersons = persons.sortBy(_.name.asc).result
   def listTasks(person: Person) = tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result
-  def listPersonTask = {
+  def listPersonsTasks = {
     val query = for {
       p <- persons
       t <- tasks if p.id === t.personId
