@@ -6,12 +6,17 @@ import java.time.LocalDateTime
 import com.typesafe.config.Config
 import slick.jdbc.H2Profile.api._
 
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+
 class Repository(path: String, config: Config) {
   private implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   private val persons = TableQuery[Persons]
   private val tasks = TableQuery[Tasks]
   private val schema = persons.schema ++ tasks.schema
   private val db = Database.forConfig(path, config)
+
+  def await[T](future: Future[T], duration: Duration): T = Await.result(future, duration)
 
   def createSchema() = db.run(DBIO.seq(schema.create))
 
