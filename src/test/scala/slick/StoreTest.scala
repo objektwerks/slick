@@ -40,7 +40,6 @@ class StoreTest extends FunSuite with BeforeAndAfterAll with Matchers {
         println(completedTask)
       }
     }
-    val personTask = Await.result(db.run(listPersonTask), 1 second)
-    personTask foreach println
+    Await.result(db.run(listPersonTask), 1 second).foreach(println)
   }
 }
