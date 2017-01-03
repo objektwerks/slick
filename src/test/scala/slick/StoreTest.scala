@@ -25,8 +25,8 @@ class StoreTest extends FunSuite with BeforeAndAfterAll with Matchers {
     val barney = Await.result(db.run(findPerson("barney")), 1 second)
     val fred = Await.result(db.run(findPerson("fred")), 1 second)
 
-    Await.result(db.run(upsert(Task(personId = barney.id.get, task = "Clean pool."))), 1 second)
-    Await.result(db.run(upsert(Task(personId = fred.id.get, task = "Mow yard."))), 1 second)
+    Await.result(db.run(upsert(Task(personId = barney.id.get, task = "clean pool"))), 1 second)
+    Await.result(db.run(upsert(Task(personId = fred.id.get, task = "mow yard"))), 1 second)
 
     val persons = Await.result(db.run(listPersons), 1 second)
     persons.size shouldBe 2

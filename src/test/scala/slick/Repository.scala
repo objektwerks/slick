@@ -5,7 +5,10 @@ import java.time.LocalDateTime
 
 import slick.jdbc.H2Profile.api._
 
+import scala.concurrent.ExecutionContext
+
 trait Repository {
+  implicit val ec = ExecutionContext.Implicits.global
   implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
@@ -19,7 +22,10 @@ trait Repository {
   def listPersons = persons.sortBy(_.name.asc).result
   def listTasks(person: Person) = tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result
   def listPersonTask = {
-    val query = for { (p, t) <- persons join tasks } yield (p, t)
+    val query = for {
+      p <- persons
+      t <- tasks if p.id === t.personId
+    } yield (p.name, t.task)
     query.result
   }
   case class Person(id: Option[Int] = None, name: String)
