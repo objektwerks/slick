@@ -14,22 +14,24 @@ class Repository(path: String, config: Config) {
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
   val schema = persons.schema ++ tasks.schema
-  val createSchema = DBIO.seq(schema.create)
-  val dropSchema = DBIO.seq(schema.drop)
   val db = Database.forConfig(path, config)
 
-  def addPerson(name: String) = (persons returning persons.map(_.id)) += Person(name = name)
-  def addTask(personId: Int, task: String) = (tasks returning tasks.map(_.id)) += Task(personId = personId, task = task)
-  def updateTask(task: Task) = tasks.insertOrUpdate(task)
-  def findPerson(name: String) = persons.filter(_.name === name).result.head
-  def listPersons = persons.sortBy(_.name.asc).result
-  def listTasks(person: Person) = tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result
-  def listPersonsTasks = {
+  def createSchema() = db.run(DBIO.seq(schema.create))
+  def dropSchema() = db.run(DBIO.seq(schema.drop))
+  def close() = db.close()
+
+  def addPerson(name: String) = db.run((persons returning persons.map(_.id)) += Person(name = name))
+  def addTask(personId: Int, task: String) = db.run((tasks returning tasks.map(_.id)) += Task(personId = personId, task = task))
+  def updateTask(task: Task) = db.run(tasks.insertOrUpdate(task))
+  def findPerson(name: String) = db.run(persons.filter(_.name === name).result.head)
+  def listPersons() = db.run(persons.sortBy(_.name.asc).result)
+  def listTasks(person: Person) = db.run(tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result)
+  def listPersonsTasks() = {
     val query = for {
       p <- persons
       t <- tasks if p.id === t.personId
     } yield (p.name, t.task)
-    query.result
+    db.run(query.result)
   }
   case class Person(id: Option[Int] = None, name: String)
 

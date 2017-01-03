@@ -12,41 +12,39 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   val repository = new Repository(path = "test", config = ConfigFactory.load("test.conf"))
   import repository._
 
-  override protected def beforeAll(): Unit = Await.result(db.run(createSchema), 1 second)
+  override protected def beforeAll(): Unit = Await.result(createSchema(), 1 second)
 
   override protected def afterAll(): Unit = {
-    Await.result(db.run(dropSchema), 1 second)
-    db.close()
+    Await.result(dropSchema(), 1 second)
+    close()
   }
 
   test("person > task") {
-    val barneyId = Await.result(db.run(addPerson("barney")), 1 second)
-    val fredId = Await.result(db.run(addPerson("fred")), 1 second)
+    val barneyId = Await.result(addPerson("barney"), 1 second)
+    val fredId = Await.result(addPerson("fred"), 1 second)
     barneyId shouldBe 1
     fredId shouldBe 2
 
-    val barney = Await.result(db.run(findPerson("barney")), 1 second)
-    val fred = Await.result(db.run(findPerson("fred")), 1 second)
+    val barney = Await.result(findPerson("barney"), 1 second)
+    val fred = Await.result(findPerson("fred"), 1 second)
     barney.id shouldBe Some(1)
     fred.id shouldBe Some(2)
 
-    val barneyTaskId = Await.result(db.run(addTask(barneyId, "clean pool")), 1 second)
-    val fredTaskId = Await.result(db.run(addTask(fredId, "mow yard")), 1 second)
+    val barneyTaskId = Await.result(addTask(barneyId, "clean pool"), 1 second)
+    val fredTaskId = Await.result(addTask(fredId, "mow yard"), 1 second)
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
 
-    val persons = Await.result(db.run(listPersons), 1 second)
+    val persons = Await.result(listPersons(), 1 second)
     persons.size shouldBe 2
-    persons foreach println
     persons foreach { p =>
-      val tasks = Await.result(db.run(listTasks(p)), 1 second)
+      val tasks = Await.result(listTasks(p), 1 second)
       tasks.size shouldBe 1
       tasks foreach { t =>
         val completedTask = t.copy(completed = Some(LocalDateTime.now))
-        Await.result(db.run(updateTask(completedTask)), 1 second)
-        println(completedTask)
+        Await.result(updateTask(completedTask), 1 second)
       }
     }
-    Await.result(db.run(listPersonsTasks), 1 second).foreach(println)
+    Await.result(listPersonsTasks(), 1 second).foreach(println)
   }
 }
