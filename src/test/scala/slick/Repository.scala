@@ -3,11 +3,12 @@ package slick
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
+import com.typesafe.config.Config
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.ExecutionContext
 
-trait Repository {
+class Repository(path: String, config: Config) {
   implicit val ec = ExecutionContext.Implicits.global
   implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   val persons = TableQuery[Persons]
@@ -15,6 +16,7 @@ trait Repository {
   val schema = persons.schema ++ tasks.schema
   val createSchema = DBIO.seq(schema.create)
   val dropSchema = DBIO.seq(schema.drop)
+  val db = Database.forConfig(path, config)
 
   def addPerson(name: String) = (persons returning persons.map(_.id)) += Person(name = name)
   def addTask(personId: Int, task: String) = (tasks returning tasks.map(_.id)) += Task(personId = personId, task = task)
