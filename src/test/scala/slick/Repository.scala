@@ -18,7 +18,12 @@ trait Repository {
   def findPerson(name: String) = persons.filter(_.name === name).result.head
   def listPersons = persons.sortBy(_.name.asc).result
   def listTasks(person: Person) = tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result
-
+  def listPersonTask = {
+    val query = for {
+      (p, t) <- persons join tasks on (_.id === _.personId)
+    } yield (p, t)
+    query.result
+  }
   case class Person(id: Option[Int] = None, name: String)
 
   class Persons(tag: Tag) extends Table[Person](tag, "persons") {
