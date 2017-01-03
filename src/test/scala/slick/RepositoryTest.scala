@@ -49,6 +49,7 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
         Await.result(updateTask(completedTask), 1 second)
       }
     }
-    Await.result(listPersonsTasks(), 1 second).foreach(println)
+    val personsTasks = Await.result(listPersonsTasks(), 1 second)
+    personsTasks.size shouldBe 2
   }
 }
