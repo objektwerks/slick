@@ -7,6 +7,9 @@ import slick.jdbc.H2Profile.api._
 
 trait Schema {
   implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
+  val persons = TableQuery[Persons]
+  val tasks = TableQuery[Tasks]
+  val schema = persons.schema ++ tasks.schema
 
   case class Person(id: Option[Int] = None, name: String)
 
