@@ -14,11 +14,9 @@ class Repository(db: Database) extends Schema {
 
   def closeDatabase(): Unit = db.close()
 
-  def addPerson(person: Person): Future[Int] = db.run((persons returning persons.map(_.id)) += person)
+  def savePerson(person: Person): Future[Int] = db.run((persons returning persons.map(_.id)) += person)
 
-  def addTask(task: Task): Future[Int] = db.run((tasks returning tasks.map(_.id)) += task)
-
-  def updateTask(task: Task): Future[Int] = db.run(tasks.insertOrUpdate(task))
+  def saveTask(task: Task): Future[Int] = if (task.id.isEmpty) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
 
   def findPerson(name: String): Future[Person] = db.run(persons.filter(_.name === name).result.head)
 
