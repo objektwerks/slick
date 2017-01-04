@@ -10,6 +10,8 @@ trait Schema {
   val persons = TableQuery[Persons]
   val tasks = TableQuery[Tasks]
   val schema = persons.schema ++ tasks.schema
+  val schemaCreate = DBIO.seq(schema.create)
+  val schemaDrop = DBIO.seq(schema.drop)
 
   case class Person(id: Option[Int] = None, name: String)
 

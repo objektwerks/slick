@@ -1,16 +1,21 @@
 package slick
 
-import slick.jdbc.H2Profile.api._
+import slick.basic.DatabaseConfig
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-class Repository(db: Database) extends Schema {
+class Repository(config: DatabaseConfig[JdbcProfile]) extends Schema {
+  import config.profile.api._
+
+  val db = config.db
+
   def await[T](future: Future[T], duration: Duration): T = Await.result(future, duration)
 
-  def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
+  def createSchema(): Future[Unit] = db.run(schemaCreate)
 
-  def dropSchema(): Future[Unit] = db.run(DBIO.seq(schema.drop))
+  def dropSchema(): Future[Unit] = db.run(schemaDrop)
 
   def closeDatabase(): Unit = db.close()
 
