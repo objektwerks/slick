@@ -8,9 +8,9 @@ import scala.concurrent.{Await, Future}
 class Repository(db: Database) extends Schema {
   def await[T](future: Future[T], duration: Duration): T = Await.result(future, duration)
 
-  def createSchema(): Future[Unit] = db.run(schemaCreate)
+  def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
 
-  def dropSchema(): Future[Unit] = db.run(schemaDrop)
+  def dropSchema(): Future[Unit] = db.run(DBIO.seq(schema.drop))
 
   def closeDatabase(): Unit = db.close()
 
