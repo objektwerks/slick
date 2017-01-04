@@ -22,9 +22,9 @@ class Repository(db: Database) {
 
   def closeDatabase(): Unit = db.close()
 
-  def addPerson(name: String): Future[Int] = db.run((persons returning persons.map(_.id)) += Person(name = name))
+  def addPerson(person: Person): Future[Int] = db.run((persons returning persons.map(_.id)) += person)
 
-  def addTask(personId: Int, task: String): Future[Int] = db.run((tasks returning tasks.map(_.id)) += Task(personId = personId, task = task))
+  def addTask(task: Task): Future[Int] = db.run((tasks returning tasks.map(_.id)) += task)
 
   def updateTask(task: Task): Future[Int] = db.run(tasks.insertOrUpdate(task))
 
