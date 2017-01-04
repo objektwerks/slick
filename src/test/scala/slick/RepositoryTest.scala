@@ -4,18 +4,19 @@ import java.time.LocalDateTime
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.duration._
 
 class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
-  val repository = new Repository(path = "test", config = ConfigFactory.load("test.conf"))
+  val repository = new Repository(Database.forConfig("test", ConfigFactory.load("test.conf")))
   import repository._
 
   override protected def beforeAll(): Unit = await(createSchema(), 1 second)
 
   override protected def afterAll(): Unit = {
     await(dropSchema(), 1 second)
-    close()
+    closeDatabase()
   }
 
   test("add") {
