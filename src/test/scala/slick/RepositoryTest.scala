@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
-import slick.jdbc.H2Profile.api._
+import slick.jdbc.H2Profile.api.Database
 
 import scala.concurrent.duration._
 
