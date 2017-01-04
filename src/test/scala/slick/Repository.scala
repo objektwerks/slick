@@ -18,31 +18,32 @@ class Repository(path: String, config: Config) {
 
   def await[T](future: Future[T], duration: Duration): T = Await.result(future, duration)
 
-  def createSchema() = db.run(DBIO.seq(schema.create))
+  def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
 
-  def dropSchema() = db.run(DBIO.seq(schema.drop))
+  def dropSchema(): Future[Unit] = db.run(DBIO.seq(schema.drop))
 
-  def close() = db.close()
+  def close(): Unit = db.close()
 
-  def addPerson(name: String) = db.run((persons returning persons.map(_.id)) += Person(name = name))
+  def addPerson(name: String): Future[Int] = db.run((persons returning persons.map(_.id)) += Person(name = name))
 
-  def addTask(personId: Int, task: String) = db.run((tasks returning tasks.map(_.id)) += Task(personId = personId, task = task))
+  def addTask(personId: Int, task: String): Future[Int] = db.run((tasks returning tasks.map(_.id)) += Task(personId = personId, task = task))
 
-  def updateTask(task: Task) = db.run(tasks.insertOrUpdate(task))
+  def updateTask(task: Task): Future[Int] = db.run(tasks.insertOrUpdate(task))
 
-  def findPerson(name: String) = db.run(persons.filter(_.name === name).result.head)
+  def findPerson(name: String): Future[Person] = db.run(persons.filter(_.name === name).result.head)
 
-  def listPersons() = db.run(persons.sortBy(_.name.asc).result)
+  def listPersons(): Future[Seq[Person]] = db.run(persons.sortBy(_.name.asc).result)
 
-  def listTasks(person: Person) = db.run(tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result)
+  def listTasks(person: Person): Future[Seq[Task]] = db.run(tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result)
 
-  def listPersonsTasks() = {
+  def listPersonsTasks(): Future[Seq[(String, String)]] = {
     val query = for {
       p <- persons
       t <- tasks if p.id === t.personId
     } yield (p.name, t.task)
     db.run(query.result)
   }
+
   case class Person(id: Option[Int] = None, name: String)
 
   class Persons(tag: Tag) extends Table[Person](tag, "persons") {
