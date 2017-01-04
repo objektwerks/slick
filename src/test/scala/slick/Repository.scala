@@ -46,7 +46,7 @@ class Repository(db: Database) {
 
   class Persons(tag: Tag) extends Table[Person](tag, "persons") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
+    def name = column[String]("name", O.Unique)
     def * = (id.?, name) <> (Person.tupled, Person.unapply)
   }
 
