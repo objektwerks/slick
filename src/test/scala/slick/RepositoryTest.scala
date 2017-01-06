@@ -22,13 +22,13 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add") {
-    val barneyId = await(addPerson( Person(name = "barney") ), 1 second)
-    val fredId = await(addPerson( Person(name = "fred") ), 1 second)
+    val barneyId = await(savePerson( Person(name = "barney") ), 1 second)
+    val fredId = await(savePerson( Person(name = "fred") ), 1 second)
     barneyId shouldBe 1
     fredId shouldBe 2
 
-    val barneyTaskId = await(addTask( Task(personId = barneyId, task = "clean pool") ), 1 second)
-    val fredTaskId = await(addTask( Task(personId = fredId, task = "mow yard") ), 1 second)
+    val barneyTaskId = await(saveTask( Task(personId = barneyId, task = "clean pool") ), 1 second)
+    val fredTaskId = await(saveTask( Task(personId = fredId, task = "mow yard") ), 1 second)
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
   }
@@ -48,7 +48,7 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
       tasks.size shouldBe 1
       tasks foreach { t =>
         val completedTask = t.copy(completed = Some(LocalDateTime.now))
-        await(updateTask(completedTask), 1 second)
+        await(saveTask(completedTask), 1 second)
       }
     }
     val personsTasks = await(listPersonsTasks(), 1 second)
