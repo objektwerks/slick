@@ -20,6 +20,7 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   override protected def afterAll(): Unit = {
+    schema.dropStatements foreach println
     await(dropSchema(), 1 second)
     closeDatabase()
   }

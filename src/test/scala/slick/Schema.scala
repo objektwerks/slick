@@ -17,7 +17,6 @@ trait Schema {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name", O.Unique)
     def * = (id.?, name) <> (Person.tupled, Person.unapply)
-    def nameIdx = index("name_idx", name, unique = true)
   }
 
   case class Task(id: Option[Int] = None, personId: Int, task: String, assigned: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
