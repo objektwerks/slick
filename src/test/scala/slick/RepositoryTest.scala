@@ -14,7 +14,10 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   val repository = new Repository(config.db)
   import repository._
 
-  override protected def beforeAll(): Unit = await(createSchema(), 1 second)
+  override protected def beforeAll(): Unit = {
+    await(createSchema(), 1 second)
+    schema.createStatements foreach println
+  }
 
   override protected def afterAll(): Unit = {
     await(dropSchema(), 1 second)
