@@ -22,7 +22,7 @@ class Repository(db: Database) extends Schema {
 
   def findWorker(name: String): Future[Worker] = db.run(workers.filter(_.name === name).result.head)
 
-  def listRoles(): Future[Seq[Role]] = db.run(roles.sortBy(_.role.asc).result)
+  def listRoles(): Future[Seq[String]] = db.run(roles.map(_.role).sortBy(_.asc).result)
 
   def listWorkers(): Future[Seq[Worker]] = db.run(workers.sortBy(_.name.asc).result)
 
