@@ -7,27 +7,27 @@ import slick.jdbc.H2Profile.api._
 
 trait Schema {
   implicit val LocalDateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
-  val persons = TableQuery[Persons]
+  val workers = TableQuery[Workers]
   val tasks = TableQuery[Tasks]
-  val schema = persons.schema ++ tasks.schema
+  val schema = workers.schema ++ tasks.schema
 
-  case class Person(id: Option[Int] = None, name: String)
+  case class Worker(id: Option[Int] = None, name: String)
 
-  class Persons(tag: Tag) extends Table[Person](tag, "persons") {
+  class Workers(tag: Tag) extends Table[Worker](tag, "workers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name", O.Unique)
-    def * = (id.?, name) <> (Person.tupled, Person.unapply)
+    def * = (id.?, name) <> (Worker.tupled, Worker.unapply)
   }
 
   case class Task(id: Option[Int] = None, personId: Int, task: String, assigned: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
 
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def personId = column[Int]("person_id")
+    def workerId = column[Int]("worker_id")
     def task = column[String]("task")
     def assigned = column[LocalDateTime]("assigned")
     def completed = column[Option[LocalDateTime]]("completed")
-    def * = (id.?, personId, task, assigned, completed) <> (Task.tupled, Task.unapply)
-    def personFk = foreignKey("person_fk", personId, TableQuery[Persons])(_.id)
+    def * = (id.?, workerId, task, assigned, completed) <> (Task.tupled, Task.unapply)
+    def workerFk = foreignKey("worker_fk", workerId, TableQuery[Workers])(_.id)
   }
 }

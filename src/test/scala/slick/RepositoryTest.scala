@@ -26,28 +26,28 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add") {
-    val barneyId = await(savePerson( Person(name = "barney") ), 1 second)
-    val fredId = await(savePerson( Person(name = "fred") ), 1 second)
+    val barneyId = await(saveWorker(Worker(name = "barney")), 1 second)
+    val fredId = await(saveWorker(Worker(name = "fred")), 1 second)
     barneyId shouldBe 1
     fredId shouldBe 2
 
-    val barneyTaskId = await(saveTask( Task(personId = barneyId, task = "clean pool") ), 1 second)
-    val fredTaskId = await(saveTask( Task(personId = fredId, task = "mow yard") ), 1 second)
+    val barneyTaskId = await(saveTask(Task(personId = barneyId, task = "clean pool")), 1 second)
+    val fredTaskId = await(saveTask(Task(personId = fredId, task = "mow yard")), 1 second)
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
   }
 
   test("find") {
-    val barney = await(findPerson("barney"), 1 second)
-    val fred = await(findPerson("fred"), 1 second)
+    val barney = await(findWorker("barney"), 1 second)
+    val fred = await(findWorker("fred"), 1 second)
     barney.id shouldBe Some(1)
     fred.id shouldBe Some(2)
   }
 
   test("list") {
-    val persons = await(listPersons(), 1 second)
-    persons.size shouldBe 2
-    persons foreach { p =>
+    val workers = await(listWorkers(), 1 second)
+    workers.size shouldBe 2
+    workers foreach { p =>
       val tasks = await(listTasks(p), 1 second)
       tasks.size shouldBe 1
       tasks foreach { t =>
@@ -55,7 +55,7 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
         await(saveTask(completedTask), 1 second)
       }
     }
-    val personsTasks = await(listPersonsTasks(), 1 second)
-    personsTasks.size shouldBe 2
+    val workersTasks = await(listWorkersTasks(), 1 second)
+    workersTasks.size shouldBe 2
   }
 }
