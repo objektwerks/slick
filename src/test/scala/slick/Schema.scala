@@ -8,12 +8,7 @@ import slick.jdbc.H2Profile.api._
 
 object Recurrence extends Enumeration {
   type Recurrence = Value
-  val weekly = Value("weekly")
-  val biweekly = Value("biweekly")
-  val monthly = Value("monthly")
-  val quarterly = Value("quarterly")
-  val semiannual = Value("semiannual")
-  val annual = Value("annual")
+  val weekly, biweekly, monthly, quarterly, semiannual, annual = Value
 }
 
 trait Schema {
