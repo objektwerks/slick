@@ -14,11 +14,15 @@ class Repository(db: Database) extends Schema {
 
   def closeDatabase(): Unit = db.close()
 
+  def addRole(role: Role): Future[Int] = db.run(roles.insertOrUpdate(role))
+
   def saveWorker(worker: Worker): Future[Int] = db.run((workers returning workers.map(_.id)) += worker)
 
   def saveTask(task: Task): Future[Int] = if (task.id.isEmpty) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
 
   def findWorker(name: String): Future[Worker] = db.run(workers.filter(_.name === name).result.head)
+
+  def listRoles(): Future[Seq[Role]] = db.run(roles.sortBy(_.role.asc).result)
 
   def listWorkers(): Future[Seq[Worker]] = db.run(workers.sortBy(_.name.asc).result)
 
