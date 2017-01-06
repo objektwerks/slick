@@ -1,4 +1,4 @@
-package slick
+package objektwerks
 
 import java.time.LocalDateTime
 

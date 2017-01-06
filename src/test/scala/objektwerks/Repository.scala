@@ -1,4 +1,4 @@
-package slick
+package objektwerks
 
 import slick.jdbc.H2Profile.api._
 

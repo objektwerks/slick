@@ -1,9 +1,9 @@
-package slick
+package objektwerks
 
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
-import slick.Recurrence.Recurrence
+import Recurrence.Recurrence
 import slick.jdbc.H2Profile.api._
 
 object Recurrence extends Enumeration {
