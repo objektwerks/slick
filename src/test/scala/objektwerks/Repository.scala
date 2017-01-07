@@ -2,11 +2,11 @@ package objektwerks
 
 import slick.jdbc.H2Profile.api._
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
 class Repository(db: Database) extends Schema {
-  def await[T](future: Future[T], duration: Duration): T = Await.result(future, duration)
+  def await[T](future: Future[T]): T = Await.result(future, 1 second)
 
   def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
 
