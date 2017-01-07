@@ -25,7 +25,7 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     closeDatabase()
   }
 
-  test("add") {
+  test("add > save") {
     val poolBoy = Role("pool boy")
     val yardBoy = Role("yard boy")
     await(addRole(poolBoy), 1 second)
