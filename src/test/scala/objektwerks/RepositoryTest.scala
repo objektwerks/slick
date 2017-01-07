@@ -42,11 +42,14 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     fredTaskId shouldBe 2
   }
 
-  test("find") {
+  test("find > save") {
     val barney = await(findWorker("barney"), 1 second)
     val fred = await(findWorker("fred"), 1 second)
     barney.id shouldBe Some(1)
     fred.id shouldBe Some(2)
+
+    await(saveWorker(barney.copy(name = "barney rebel")), 1 second)
+    await(saveWorker(fred.copy(name = "fred flintstone")), 1 second)
   }
 
   test("list") {
@@ -65,5 +68,6 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     }
     val workersTasks = await(listWorkersTasks(), 1 second)
     workersTasks.size shouldBe 2
+    workersTasks foreach println
   }
 }
