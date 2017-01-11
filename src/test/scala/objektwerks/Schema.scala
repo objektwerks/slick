@@ -12,17 +12,17 @@ object Recurrence extends Enumeration {
 }
 
 /*
-  Worker 1 ---> * Task
-  Worker 1 ---> 1 Role
+  Contractor 1 ---> * Task
+  Contractor 1 ---> 1 Role
   Task 1 ---> 1 Recurrence
  */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val roles = TableQuery[Roles]
-  val workers = TableQuery[Workers]
+  val contractors = TableQuery[Contractors]
   val tasks = TableQuery[Tasks]
-  val schema = roles.schema ++ workers.schema ++ tasks.schema
+  val schema = roles.schema ++ contractors.schema ++ tasks.schema
 
   case class Role(role: String)
 
@@ -31,26 +31,26 @@ trait Schema {
     def * = role <> (Role.apply, Role.unapply)
   }
 
-  case class Worker(id: Option[Int] = None, name: String, role: String)
+  case class Contractor(id: Option[Int] = None, name: String, role: String)
 
-  class Workers(tag: Tag) extends Table[Worker](tag, "workers") {
+  class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name", O.Unique)
     def role = column[String]("role")
-    def * = (id.?, name, role) <> (Worker.tupled, Worker.unapply)
+    def * = (id.?, name, role) <> (Contractor.tupled, Contractor.unapply)
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.role)
   }
 
-  case class Task(id: Option[Int] = None, workerId: Int, task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
+  case class Task(id: Option[Int] = None, contractorId: Int, task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
 
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def workerId = column[Int]("worker_id")
+    def contractorId = column[Int]("contractor_id")
     def task = column[String]("task")
     def recurrence = column[Recurrence]("recurrence")
     def started = column[LocalDateTime]("started")
     def completed = column[Option[LocalDateTime]]("completed")
-    def * = (id.?, workerId, task, recurrence, started, completed) <> (Task.tupled, Task.unapply)
-    def workerFk = foreignKey("worker_fk", workerId, TableQuery[Workers])(_.id)
+    def * = (id.?, contractorId, task, recurrence, started, completed) <> (Task.tupled, Task.unapply)
+    def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
 }

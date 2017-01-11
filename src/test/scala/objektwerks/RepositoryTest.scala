@@ -29,43 +29,43 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     await(addRole(poolBoy))
     await(addRole(yardBoy))
 
-    val barneyId = await(saveWorker(Worker(name = "barney", role = poolBoy.role)))
-    val fredId = await(saveWorker(Worker(name = "fred", role = yardBoy.role)))
+    val barneyId = await(saveContractor(Contractor(name = "barney", role = poolBoy.role)))
+    val fredId = await(saveContractor(Contractor(name = "fred", role = yardBoy.role)))
     barneyId shouldBe 1
     fredId shouldBe 2
 
-    val barneyTaskId = await(saveTask(Task(workerId = barneyId, task = "clean pool", recurrence = Recurrence.weekly)))
-    val fredTaskId = await(saveTask(Task(workerId = fredId, task = "mow yard", recurrence = Recurrence.weekly)))
+    val barneyTaskId = await(saveTask(Task(contractorId = barneyId, task = "clean pool", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
+    val fredTaskId = await(saveTask(Task(contractorId = fredId, task = "mow yard", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
   }
 
   test("find > save") {
-    val barney = await(findWorker("barney"))
-    val fred = await(findWorker("fred"))
+    val barney = await(findContractor("barney"))
+    val fred = await(findContractor("fred"))
     barney.id shouldBe Some(1)
     fred.id shouldBe Some(2)
 
-    await(saveWorker(barney.copy(name = "barney rebel")))
-    await(saveWorker(fred.copy(name = "fred flintstone")))
+    await(saveContractor(barney.copy(name = "barney rebel")))
+    await(saveContractor(fred.copy(name = "fred flintstone")))
   }
 
   test("list") {
     val roles = await(listRoles())
     roles.size shouldBe 2
 
-    val workers = await(listWorkers())
-    workers.size shouldBe 2
-    workers foreach { p =>
-      val tasks = await(listTasks(p))
+    val contractors = await(listContractors())
+    contractors.size shouldBe 2
+    contractors foreach { c =>
+      val tasks = await(listTasks(c))
       tasks.size shouldBe 1
       tasks foreach { t =>
         val completedTask = t.copy(completed = Some(LocalDateTime.now))
         await(saveTask(completedTask))
       }
     }
-    val workersTasks = await(listWorkersTasks())
-    workersTasks.size shouldBe 2
-    workersTasks foreach println
+    val contractorsTasks = await(listContractorsTasks())
+    contractorsTasks.size shouldBe 2
+    contractorsTasks foreach println
   }
 }
