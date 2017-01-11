@@ -38,6 +38,9 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     val fredTaskId = await(saveTask(Task(contractorId = fredId, task = "mow yard", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
+
+    val customerId = await(saveCustomer(Customer(name = "john adams", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175")))
+    customerId shouldBe 1
   }
 
   test("find > save") {

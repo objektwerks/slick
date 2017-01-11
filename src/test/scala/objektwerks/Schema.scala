@@ -57,13 +57,13 @@ trait Schema {
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
 
-  case class Customer(id: Option[Int] = None, name: String, address: String, phone: Int)
+  case class Customer(id: Option[Int] = None, name: String, address: String, phone: String)
 
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def address = column[String]("address")
-    def phone = column[Int]("phone")
+    def phone = column[String]("phone")
     def * = (id.?, name, address, phone) <> (Customer.tupled, Customer.unapply)
   }
 
