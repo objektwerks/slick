@@ -21,6 +21,7 @@ trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val roles = TableQuery[Roles]
+  val customers = TableQuery[Customers]
   val contractors = TableQuery[Contractors]
   val tasks = TableQuery[Tasks]
   val schema = roles.schema ++ contractors.schema ++ tasks.schema
@@ -53,5 +54,15 @@ trait Schema {
     def completed = column[Option[LocalDateTime]]("completed")
     def * = (id.?, contractorId, task, recurrence, started, completed) <> (Task.tupled, Task.unapply)
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
+  }
+
+  case class Customer(id: Option[Int] = None, name: String, address: String, phone: Int)
+
+  class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name")
+    def address = column[String]("address")
+    def phone = column[Int]("phone")
+    def * = (id.?, name, address, phone) <> (Customer.tupled, Customer.unapply)
   }
 }
