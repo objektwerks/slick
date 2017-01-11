@@ -73,6 +73,7 @@ trait Schema {
     def customerId = column[Int]("customer_id")
     def contractorId = column[Int]("contractor_id")
     def * = (customerId, contractorId) <> (CustomerContractor.tupled, CustomerContractor.unapply)
+    def pk = primaryKey("pk", (customerId, contractorId))
     def customerFk = foreignKey("customer_contractor_fk", customerId, TableQuery[Customers])(_.id, onDelete = ForeignKeyAction.Cascade)
     def contractorFk = foreignKey("contractor_customer_fk", contractorId, TableQuery[Contractors])(_.id, onDelete = ForeignKeyAction.Cascade)
   }

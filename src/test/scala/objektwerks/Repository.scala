@@ -22,6 +22,8 @@ class Repository(db: Database) extends Schema {
 
   def saveCustomer(customer: Customer): Future[Int] = if (customer.id.isEmpty) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
 
+  def linkCustomerWithContractor(customerContractor: CustomerContractor) = db.run(customersContractors.insertOrUpdate(customerContractor))
+
   def findContractor(name: String): Future[Contractor] = db.run(contractors.filter(_.name === name).result.head)
 
   def listRoles(): Future[Seq[String]] = db.run(roles.map(_.role).sortBy(_.asc).result)
