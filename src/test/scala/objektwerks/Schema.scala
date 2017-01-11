@@ -15,6 +15,7 @@ object Recurrence extends Enumeration {
   Contractor 1 ---> * Task
   Contractor 1 ---> 1 Role
   Task 1 ---> 1 Recurrence
+  Contractor * <---> * Customer
  */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
