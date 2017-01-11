@@ -41,16 +41,16 @@ trait Schema {
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.role)
   }
 
-  case class Task(id: Option[Int] = None, workerId: Int, task: String, recurrence: Recurrence, assigned: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
+  case class Task(id: Option[Int] = None, workerId: Int, task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
 
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def workerId = column[Int]("worker_id")
     def task = column[String]("task")
     def recurrence = column[Recurrence]("recurrence")
-    def assigned = column[LocalDateTime]("assigned")
+    def started = column[LocalDateTime]("started")
     def completed = column[Option[LocalDateTime]]("completed")
-    def * = (id.?, workerId, task, recurrence, assigned, completed) <> (Task.tupled, Task.unapply)
+    def * = (id.?, workerId, task, recurrence, started, completed) <> (Task.tupled, Task.unapply)
     def workerFk = foreignKey("worker_fk", workerId, TableQuery[Workers])(_.id)
   }
 }

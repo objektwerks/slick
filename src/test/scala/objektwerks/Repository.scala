@@ -26,7 +26,7 @@ class Repository(db: Database) extends Schema {
 
   def listWorkers(): Future[Seq[Worker]] = db.run(workers.sortBy(_.name.asc).result)
 
-  def listTasks(person: Worker): Future[Seq[Task]] = db.run(tasks.filter(_.id === person.id).sortBy(_.assigned.asc).result)
+  def listTasks(person: Worker): Future[Seq[Task]] = db.run(tasks.filter(_.id === person.id).sortBy(_.started.asc).result)
 
   def listWorkersTasks(): Future[Seq[(String, String)]] = {
     val query = for {
