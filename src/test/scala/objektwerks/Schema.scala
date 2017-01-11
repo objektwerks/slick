@@ -8,9 +8,14 @@ import slick.jdbc.H2Profile.api._
 
 object Recurrence extends Enumeration {
   type Recurrence = Value
-  val weekly, biweekly, monthly, quarterly, semiannual, annual = Value
+  val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
 }
 
+/*
+  Worker 1 ---> * Task
+  Worker 1 ---> 1 Role
+  Task 1 ---> 1 Recurrence
+ */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
@@ -26,26 +31,26 @@ trait Schema {
     def * = role <> (Role.apply, Role.unapply)
   }
 
-  case class Worker(id: Option[Int] = None, name: String, role: String, recurrence: Recurrence)
+  case class Worker(id: Option[Int] = None, name: String, role: String)
 
   class Workers(tag: Tag) extends Table[Worker](tag, "workers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name", O.Unique)
     def role = column[String]("role")
-    def recurrence = column[Recurrence]("recurrence")
-    def * = (id.?, name, role, recurrence) <> (Worker.tupled, Worker.unapply)
+    def * = (id.?, name, role) <> (Worker.tupled, Worker.unapply)
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.role)
   }
 
-  case class Task(id: Option[Int] = None, workerId: Int, task: String, assigned: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
+  case class Task(id: Option[Int] = None, workerId: Int, task: String, recurrence: Recurrence, assigned: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
 
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def workerId = column[Int]("worker_id")
     def task = column[String]("task")
+    def recurrence = column[Recurrence]("recurrence")
     def assigned = column[LocalDateTime]("assigned")
     def completed = column[Option[LocalDateTime]]("completed")
-    def * = (id.?, workerId, task, assigned, completed) <> (Task.tupled, Task.unapply)
+    def * = (id.?, workerId, task, recurrence, assigned, completed) <> (Task.tupled, Task.unapply)
     def workerFk = foreignKey("worker_fk", workerId, TableQuery[Workers])(_.id)
   }
 }

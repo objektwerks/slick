@@ -29,13 +29,13 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     await(addRole(poolBoy))
     await(addRole(yardBoy))
 
-    val barneyId = await(saveWorker(Worker(name = "barney", role = poolBoy.role, recurrence = Recurrence.weekly)))
-    val fredId = await(saveWorker(Worker(name = "fred", role = yardBoy.role, recurrence = Recurrence.biweekly)))
+    val barneyId = await(saveWorker(Worker(name = "barney", role = poolBoy.role)))
+    val fredId = await(saveWorker(Worker(name = "fred", role = yardBoy.role)))
     barneyId shouldBe 1
     fredId shouldBe 2
 
-    val barneyTaskId = await(saveTask(Task(workerId = barneyId, task = "clean pool")))
-    val fredTaskId = await(saveTask(Task(workerId = fredId, task = "mow yard")))
+    val barneyTaskId = await(saveTask(Task(workerId = barneyId, task = "clean pool", recurrence = Recurrence.weekly)))
+    val fredTaskId = await(saveTask(Task(workerId = fredId, task = "mow yard", recurrence = Recurrence.weekly)))
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
   }
