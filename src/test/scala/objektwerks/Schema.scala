@@ -21,10 +21,11 @@ trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val roles = TableQuery[Roles]
-  val customers = TableQuery[Customers]
   val contractors = TableQuery[Contractors]
   val tasks = TableQuery[Tasks]
-  val schema = roles.schema ++ contractors.schema ++ tasks.schema
+  val customers = TableQuery[Customers]
+  val customersContractors = TableQuery[CustomersContractors]
+  val schema = roles.schema ++ contractors.schema ++ tasks.schema ++ customers.schema ++ customersContractors.schema
 
   case class Role(role: String)
 
@@ -64,5 +65,15 @@ trait Schema {
     def address = column[String]("address")
     def phone = column[Int]("phone")
     def * = (id.?, name, address, phone) <> (Customer.tupled, Customer.unapply)
+  }
+
+  case class CustomerContractor(customerId: Int, contractorId: Int)
+
+  class CustomersContractors(tag: Tag) extends Table[CustomerContractor](tag, "customers_contractors") {
+    def customerId = column[Int]("customer_id")
+    def contractorId = column[Int]("contractor_id")
+    def * = (customerId, contractorId) <> (CustomerContractor.tupled, CustomerContractor.unapply)
+    def customerFk = foreignKey("customer_contractor_fk", customerId, TableQuery[Customers])(_.id, onDelete = ForeignKeyAction.Cascade)
+    def contractorFk = foreignKey("contractor_customer_fk", contractorId, TableQuery[Contractors])(_.id, onDelete = ForeignKeyAction.Cascade)
   }
 }
