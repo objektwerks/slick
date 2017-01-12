@@ -40,11 +40,19 @@ class Repository(db: Database) extends Schema {
 
   def listSuppliers(): Future[Seq[Supplier]] = db.run(suppliers.sortBy(_.name.asc).result)
 
+  def listCustomersContractors(): Future[Seq[(String, String)]] = {
+    val query = for {
+      c <- customers
+      t <- contractors if c.id === t.customerId
+    } yield (c.name, t.name)
+    db.run(query.result)
+  }
+
   def listContractorsTasks(): Future[Seq[(String, String)]] = {
     val query = for {
-      w <- contractors
-      t <- tasks if w.id === t.contractorId
-    } yield (w.name, t.task)
+      c <- contractors
+      t <- tasks if c.id === t.contractorId
+    } yield (c.name, t.task)
     db.run(query.result)
   }
 }

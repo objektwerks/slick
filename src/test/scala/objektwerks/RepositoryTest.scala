@@ -13,12 +13,12 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   import repository._
 
   override protected def beforeAll(): Unit = {
-    await(createSchema())
     schema.createStatements foreach println
+    schema.dropStatements foreach println
+    await(createSchema())
   }
 
   override protected def afterAll(): Unit = {
-    schema.dropStatements foreach println
     await(dropSchema())
     closeDatabase()
   }
@@ -88,6 +88,10 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
 
     val suppliers = await(listSuppliers())
     suppliers.size shouldBe 2
+
+    val customersContractors = await(listCustomersContractors())
+    customersContractors.size shouldBe 2
+    customersContractors foreach println
 
     val contractorsTasks = await(listContractorsTasks())
     contractorsTasks.size shouldBe 2
