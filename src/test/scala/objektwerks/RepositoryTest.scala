@@ -104,5 +104,9 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     val contractorsTasks = await(listContractorsTasks())
     contractorsTasks.size shouldBe 2
     contractorsTasks foreach println
+
+    val contractorsSuppliers = await(listContractorsSuppliers())
+    contractorsSuppliers.size shouldBe 2
+    contractorsSuppliers foreach println
   }
 }

@@ -57,4 +57,13 @@ class Repository(db: Database) extends Schema {
     } yield (c.name, t.task)
     db.run(query.result)
   }
+
+  def listContractorsSuppliers(): Future[Seq[(String, String)]] = {
+    val query = for {
+      c <- contractors
+      s <- suppliers
+      cs <- contractorsSuppliers if c.id === cs.contractorId && s.id === cs.supplierId
+    } yield (c.name, s.name)
+    db.run(query.result)
+  }
 }
