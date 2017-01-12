@@ -69,6 +69,9 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("list") {
+    val customers = await(listCustomers())
+    customers.size shouldBe 2
+
     val roles = await(listRoles())
     roles.size shouldBe 2
 
@@ -82,6 +85,10 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
         await(saveTask(completedTask))
       }
     }
+
+    val suppliers = await(listSuppliers())
+    suppliers.size shouldBe 2
+
     val contractorsTasks = await(listContractorsTasks())
     contractorsTasks.size shouldBe 2
     contractorsTasks foreach println
