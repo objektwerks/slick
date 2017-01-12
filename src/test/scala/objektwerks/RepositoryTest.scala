@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 
 class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   val config = DatabaseConfig.forConfig[H2Profile]("test", ConfigFactory.load("test.conf"))
-  val repository = new Repository(config.db)(1 second)
+  val repository = new Repository(config.db, 1 second)
   import repository._
 
   override protected def beforeAll(): Unit = {
