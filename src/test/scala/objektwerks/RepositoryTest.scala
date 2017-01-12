@@ -83,19 +83,18 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     val roles = await(listRoles())
     roles.size shouldBe 2
 
-    val contractors = await(listContractors())
-    contractors.size shouldBe 2
-    contractors foreach { c =>
-      val tasks = await(listTasks(c))
-      tasks.size shouldBe 1
-      tasks foreach { t =>
-        val completedTask = t.copy(completed = Some(LocalDateTime.now))
-        await(saveTask(completedTask))
+    customers foreach { customer =>
+      val contractors = await(listContractors(customer))
+      contractors.size shouldBe 1
+      contractors foreach { contractor =>
+        val tasks = await(listTasks(contractor))
+        tasks.size shouldBe 1
+        tasks foreach { task =>
+          val completedTask = task.copy(completed = Some(LocalDateTime.now))
+          await(saveTask(completedTask))
+        }
       }
     }
-
-    val suppliers = await(listSuppliers())
-    suppliers.size shouldBe 2
 
     val customersContractors = await(listCustomersContractors())
     customersContractors.size shouldBe 2
