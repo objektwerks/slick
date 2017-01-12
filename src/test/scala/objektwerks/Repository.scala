@@ -26,11 +26,11 @@ class Repository(db: Database) extends Schema {
 
   def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id.isEmpty) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
 
-  def findCustomer(name: String): Future[Customer] = db.run(customers.filter(_.name === name).result.head)
+  def findCustomer(name: String): Future[Option[Customer]] = db.run(customers.filter(_.name === name).result.headOption)
 
-  def findContractor(name: String): Future[Contractor] = db.run(contractors.filter(_.name === name).result.head)
+  def findContractor(name: String): Future[Option[Contractor]] = db.run(contractors.filter(_.name === name).result.headOption)
 
-  def findSupplier(name: String): Future[Supplier] = db.run(suppliers.filter(_.name === name).result.head)
+  def findSupplier(name: String): Future[Option[Supplier]] = db.run(suppliers.filter(_.name === name).result.headOption)
 
   def listRoles(): Future[Seq[String]] = db.run(roles.map(_.role).sortBy(_.asc).result)
 
