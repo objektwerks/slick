@@ -11,12 +11,12 @@ object Recurrence extends Enumeration {
   val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
 }
 
-/*
+/**
  * Customer 1 ---> * Contractor 1 ---> * Task
  * Contractor 1 ---> 1 Role
  * Task 1 ---> 1 Recurrence
  * Contractor * <---> * Supplier
- **/
+ */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
