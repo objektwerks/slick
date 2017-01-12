@@ -24,8 +24,8 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add > save") {
-    val georgeCustomerId = await(saveCustomer(Customer(name = "george washington", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com")))
-    val johnCustomerId = await(saveCustomer(Customer(name = "john adams", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com")))
+    val georgeCustomerId = await(saveCustomer(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com")))
+    val johnCustomerId = await(saveCustomer(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com")))
     georgeCustomerId shouldBe 1
     johnCustomerId shouldBe 2
 
@@ -51,6 +51,14 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("find > save") {
+    val george = await(findCustomer("george"))
+    val john = await(findCustomer("john"))
+    george.id shouldBe Some(1)
+    john.id shouldBe Some(2)
+
+    await(saveCustomer(george.copy(name = "george washington")))
+    await(saveCustomer(john.copy(name = "john adams")))
+
     val barney = await(findContractor("barney"))
     val fred = await(findContractor("fred"))
     barney.id shouldBe Some(1)
