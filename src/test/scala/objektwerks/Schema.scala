@@ -12,20 +12,32 @@ object Recurrence extends Enumeration {
 }
 
 /*
-  Contractor 1 ---> * Task
+  Customer 1 ---> * Contractor 1 ---> * Task
   Contractor 1 ---> 1 Role
   Task 1 ---> 1 Recurrence
-  Contractor * <---> * Customer
+  Contractor * <---> * Supplier
  */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
+  val customers = TableQuery[Customers]
   val roles = TableQuery[Roles]
   val contractors = TableQuery[Contractors]
   val tasks = TableQuery[Tasks]
-  val customers = TableQuery[Customers]
-  val customersContractors = TableQuery[CustomersContractors]
-  val schema = roles.schema ++ contractors.schema ++ tasks.schema ++ customers.schema ++ customersContractors.schema
+  val suppliers = TableQuery[Suppliers]
+  val contractorsSuppliers = TableQuery[ContractorsSuppliers]
+  val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
+
+  case class Customer(id: Option[Int] = None, name: String, address: String, phone: String, email: String)
+
+  class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name")
+    def address = column[String]("address")
+    def phone = column[String]("phone")
+    def email = column[String]("email")
+    def * = (id.?, name, address, phone, email) <> (Customer.tupled, Customer.unapply)
+  }
 
   case class Role(role: String)
 
@@ -34,14 +46,16 @@ trait Schema {
     def * = role <> (Role.apply, Role.unapply)
   }
 
-  case class Contractor(id: Option[Int] = None, name: String, role: String)
+  case class Contractor(id: Option[Int] = None, customerId: Int, name: String, role: String)
 
   class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def customerId = column[Int]("customer_id")
     def name = column[String]("name", O.Unique)
     def role = column[String]("role")
-    def * = (id.?, name, role) <> (Contractor.tupled, Contractor.unapply)
+    def * = (id.?, customerId, name, role) <> (Contractor.tupled, Contractor.unapply)
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.role)
+    def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
 
   case class Task(id: Option[Int] = None, contractorId: Int, task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: Option[LocalDateTime] = None)
@@ -57,24 +71,25 @@ trait Schema {
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
 
-  case class Customer(id: Option[Int] = None, name: String, address: String, phone: String)
+  case class Supplier(id: Option[Int] = None, name: String, address: String, phone: String, email: String)
 
-  class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
+  class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def address = column[String]("address")
     def phone = column[String]("phone")
-    def * = (id.?, name, address, phone) <> (Customer.tupled, Customer.unapply)
+    def email = column[String]("email")
+    def * = (id.?, name, address, phone, email) <> (Supplier.tupled, Supplier.unapply)
   }
 
-  case class CustomerContractor(customerId: Int, contractorId: Int)
+  case class ContractorSupplier(scontractorId: Int, upplierId: Int)
 
-  class CustomersContractors(tag: Tag) extends Table[CustomerContractor](tag, "customers_contractors") {
-    def customerId = column[Int]("customer_id")
+  class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")
-    def * = (customerId, contractorId) <> (CustomerContractor.tupled, CustomerContractor.unapply)
-    def pk = primaryKey("pk", (customerId, contractorId))
-    def customerFk = foreignKey("customer_contractor_fk", customerId, TableQuery[Customers])(_.id, onDelete = ForeignKeyAction.Cascade)
-    def contractorFk = foreignKey("contractor_customer_fk", contractorId, TableQuery[Contractors])(_.id, onDelete = ForeignKeyAction.Cascade)
+    def supplierId = column[Int]("supplier_id")
+    def * = (contractorId, supplierId) <> (ContractorSupplier.tupled, ContractorSupplier.unapply)
+    def pk = primaryKey("pk", (contractorId, supplierId))
+    def contractorFk = foreignKey("contractor_supplier_fk", contractorId, TableQuery[Contractors])(_.id, onDelete = ForeignKeyAction.Cascade)
+    def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Customers])(_.id, onDelete = ForeignKeyAction.Cascade)
   }
 }

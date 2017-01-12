@@ -24,28 +24,30 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add > save") {
+    val georgeCustomerId = await(saveCustomer(Customer(name = "george washington", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com")))
+    val johnCustomerId = await(saveCustomer(Customer(name = "john adams", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com")))
+    georgeCustomerId shouldBe 1
+    johnCustomerId shouldBe 2
+
     val poolBoy = Role("pool boy")
     val yardBoy = Role("yard boy")
     await(addRole(poolBoy))
     await(addRole(yardBoy))
 
-    val barneyId = await(saveContractor(Contractor(name = "barney", role = poolBoy.role)))
-    val fredId = await(saveContractor(Contractor(name = "fred", role = yardBoy.role)))
-    barneyId shouldBe 1
-    fredId shouldBe 2
+    val barneyContractorId = await(saveContractor(Contractor(customerId = georgeCustomerId, name = "barney", role = poolBoy.role)))
+    val fredContractorId = await(saveContractor(Contractor(customerId = johnCustomerId, name = "fred", role = yardBoy.role)))
+    barneyContractorId shouldBe 1
+    fredContractorId shouldBe 2
 
-    val barneyTaskId = await(saveTask(Task(contractorId = barneyId, task = "clean pool", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
-    val fredTaskId = await(saveTask(Task(contractorId = fredId, task = "mow yard", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
+    val barneyTaskId = await(saveTask(Task(contractorId = barneyContractorId, task = "clean pool", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
+    val fredTaskId = await(saveTask(Task(contractorId = fredContractorId, task = "mow yard", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
 
-    val georgeCustomerId = await(saveCustomer(Customer(name = "george washington", address = "3200 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000")))
-    val johnCustomerId = await(saveCustomer(Customer(name = "john adams", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175")))
-    georgeCustomerId shouldBe 1
-    johnCustomerId shouldBe 2
-
-    await(linkCustomerWithContractor(CustomerContractor(georgeCustomerId, barneyId)))
-    await(linkCustomerWithContractor(CustomerContractor(johnCustomerId, fredId)))
+    val homeDepotId = await(saveSupplier(Supplier(name = "home depot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com")))
+    val lowesId = await(saveSupplier(Supplier(name = "lowes", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com")))
+    await(saveContractorSupplier(ContractorSupplier(barneyContractorId, homeDepotId)))
+    await(saveContractorSupplier(ContractorSupplier(fredContractorId, lowesId)))
   }
 
   test("find > save") {

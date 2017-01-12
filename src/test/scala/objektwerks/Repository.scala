@@ -16,13 +16,15 @@ class Repository(db: Database) extends Schema {
 
   def addRole(role: Role): Future[Int] = db.run(roles.insertOrUpdate(role))
 
+  def saveCustomer(customer: Customer): Future[Int] = if (customer.id.isEmpty) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
+
   def saveContractor(contractor: Contractor): Future[Int] = if (contractor.id.isEmpty) db.run((contractors returning contractors.map(_.id)) += contractor) else db.run(contractors.insertOrUpdate(contractor))
 
   def saveTask(task: Task): Future[Int] = if (task.id.isEmpty) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
 
-  def saveCustomer(customer: Customer): Future[Int] = if (customer.id.isEmpty) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
+  def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id.isEmpty) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
 
-  def linkCustomerWithContractor(customerContractor: CustomerContractor) = db.run(customersContractors.insertOrUpdate(customerContractor))
+  def saveContractorSupplier(contractorSupplier: ContractorSupplier) = db.run(contractorsSuppliers.insertOrUpdate(contractorSupplier))
 
   def findContractor(name: String): Future[Contractor] = db.run(contractors.filter(_.name === name).result.head)
 
