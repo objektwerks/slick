@@ -82,7 +82,7 @@ trait Schema {
     def * = (id.?, name, address, phone, email) <> (Supplier.tupled, Supplier.unapply)
   }
 
-  case class ContractorSupplier(scontractorId: Int, upplierId: Int)
+  case class ContractorSupplier(scontractorId: Int, supplierId: Int)
 
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")

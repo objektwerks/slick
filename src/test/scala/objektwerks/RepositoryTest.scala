@@ -46,8 +46,8 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
 
     val homeDepotId = await(saveSupplier(Supplier(name = "home depot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com")))
     val lowesId = await(saveSupplier(Supplier(name = "lowes", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com")))
-    await(saveContractorSupplier(ContractorSupplier(barneyContractorId, homeDepotId)))
-    await(saveContractorSupplier(ContractorSupplier(fredContractorId, lowesId)))
+    await(addContractorSupplier(ContractorSupplier(barneyContractorId, homeDepotId)))
+    await(addContractorSupplier(ContractorSupplier(fredContractorId, lowesId)))
   }
 
   test("find > save") {
