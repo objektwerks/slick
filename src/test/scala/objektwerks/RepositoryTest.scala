@@ -44,8 +44,8 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
 
-    val homeDepotId = await(saveSupplier(Supplier(name = "home depot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com")))
-    val lowesId = await(saveSupplier(Supplier(name = "lowes", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com")))
+    val homeDepotId = await(saveSupplier(Supplier(name = "homedepot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com")))
+    val lowesId = await(saveSupplier(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com")))
     await(addContractorSupplier(ContractorSupplier(barneyContractorId, homeDepotId)))
     await(addContractorSupplier(ContractorSupplier(fredContractorId, lowesId)))
   }
@@ -66,6 +66,14 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
 
     await(saveContractor(barney.copy(name = "barney rebel")))
     await(saveContractor(fred.copy(name = "fred flintstone")))
+
+    val homeDepot = await(findSupplier("homedepot"))
+    val lowes = await(findSupplier("lowe"))
+    homeDepot.id shouldBe Some(1)
+    lowes.id shouldBe Some(2)
+
+    await(saveSupplier(homeDepot.copy(name = "home depot")))
+    await(saveSupplier(lowes.copy(name = "lowes")))
   }
 
   test("list") {
