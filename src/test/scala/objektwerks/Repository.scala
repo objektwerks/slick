@@ -1,45 +1,70 @@
 package objektwerks
 
+import java.util.concurrent.TimeUnit
+
+import org.openjdk.jmh.annotations.{Benchmark, Mode}
+
+import org.openjdk.jmh.annotations.{BenchmarkMode, OutputTimeUnit}
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@BenchmarkMode(Array(Mode.Throughput))
 class Repository(db: Database, awaitDuration: Duration) extends Schema {
+  @Benchmark
   def await[T](future: Future[T]): T = Await.result(future, awaitDuration)
 
+  @Benchmark
   def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
 
+  @Benchmark
   def dropSchema(): Future[Unit] = db.run(DBIO.seq(schema.drop))
 
+  @Benchmark
   def closeDatabase(): Unit = db.close()
 
+  @Benchmark
   def addRole(role: Role): Future[Int] = db.run(roles.insertOrUpdate(role))
 
+  @Benchmark
   def addContractorSupplier(contractorSupplier: ContractorSupplier) = db.run(contractorsSuppliers.insertOrUpdate(contractorSupplier))
 
+  @Benchmark
   def saveCustomer(customer: Customer): Future[Int] = if (customer.id.isEmpty) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
 
+  @Benchmark
   def saveContractor(contractor: Contractor): Future[Int] = if (contractor.id.isEmpty) db.run((contractors returning contractors.map(_.id)) += contractor) else db.run(contractors.insertOrUpdate(contractor))
 
+  @Benchmark
   def saveTask(task: Task): Future[Int] = if (task.id.isEmpty) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
 
+  @Benchmark
   def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id.isEmpty) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
 
+  @Benchmark
   def findCustomer(name: String): Future[Option[Customer]] = db.run(customers.filter(_.name === name).result.headOption)
 
+  @Benchmark
   def findContractor(name: String): Future[Option[Contractor]] = db.run(contractors.filter(_.name === name).result.headOption)
 
+  @Benchmark
   def findSupplier(name: String): Future[Option[Supplier]] = db.run(suppliers.filter(_.name === name).result.headOption)
 
+  @Benchmark
   def listRoles(): Future[Seq[String]] = db.run(roles.map(_.role).sortBy(_.asc).result)
 
+  @Benchmark
   def listCustomers(): Future[Seq[Customer]] = db.run(customers.sortBy(_.name.asc).result)
 
+  @Benchmark
   def listContractors(customer: Customer): Future[Seq[Contractor]] = db.run(contractors.filter(_.id === customer.id).sortBy(_.name.asc).result)
 
+  @Benchmark
   def listTasks(contractor: Contractor): Future[Seq[Task]] = db.run(tasks.filter(_.id === contractor.id).sortBy(_.started.asc).result)
 
+  @Benchmark
   def listCustomersContractors(): Future[Seq[(String, String)]] = {
     val query = for {
       c <- customers
@@ -48,6 +73,7 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
     db.run(query.result)
   }
 
+  @Benchmark
   def listContractorsTasks(): Future[Seq[(String, String)]] = {
     val query = for {
       c <- contractors
@@ -56,6 +82,7 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
     db.run(query.result)
   }
 
+  @Benchmark
   def listContractorsSuppliers(): Future[Seq[(String, String)]] = {
     val query = for {
       c <- contractors
