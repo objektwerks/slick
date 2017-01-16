@@ -1,17 +1,11 @@
 package objektwerks
 
-import java.util.concurrent.TimeUnit
-
-import org.openjdk.jmh.annotations.{Benchmark, BenchmarkMode, Mode, OutputTimeUnit}
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@BenchmarkMode(Array(Mode.Throughput))
 class Repository(db: Database, awaitDuration: Duration) extends Schema {
-  @Benchmark
   def await[T](future: Future[T]): T = Await.result(future, awaitDuration)
 
   def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
