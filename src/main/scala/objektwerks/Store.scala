@@ -31,7 +31,7 @@ object Store extends LazyLogging {
 @Warmup(iterations = 3)
 @Measurement(iterations = 3)
 @Fork(1)
-class PeformanceBenchmark() {
+class Performance() {
   import Store.repository._
 
   @Benchmark
