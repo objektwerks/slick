@@ -11,10 +11,15 @@ object Main extends App {
   val repository = new Repository(config.db, 1 second)
   import repository._
 
+  await(createSchema())
+
   val poolBoy = Role("pool boy")
   val yardBoy = Role("yard boy")
   await(addRole(poolBoy))
   await(addRole(yardBoy))
   val roles = await(listRoles())
   assert(roles.size == 2)
+
+  await(dropSchema())
+  closeDatabase()
 }
