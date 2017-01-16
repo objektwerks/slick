@@ -18,20 +18,18 @@ object Main {
   await(createSchema())
 
   def main(args: Array[String]) {
-    println("Start ***********************************************************")
     sys.addShutdownHook {
       await(dropSchema())
       closeDatabase()
     }
-    println("End ************************************************************")
   }
 }
 
 @State(Scope.Thread)
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 3, time = 1)
-@Measurement(iterations = 3, time = 1)
+@Warmup(iterations = 3)
+@Measurement(iterations = 3)
 @Fork(1)
 class PerformanceBenchmark() {
   import Main.repository._
