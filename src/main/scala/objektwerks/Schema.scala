@@ -3,7 +3,7 @@ package objektwerks
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
-import Recurrence.Recurrence
+import objektwerks.Recurrence.Recurrence
 import slick.jdbc.H2Profile.api._
 
 object Recurrence extends Enumeration {

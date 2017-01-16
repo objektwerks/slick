@@ -2,9 +2,7 @@ package objektwerks
 
 import java.util.concurrent.TimeUnit
 
-import org.openjdk.jmh.annotations.{Benchmark, Mode}
-
-import org.openjdk.jmh.annotations.{BenchmarkMode, OutputTimeUnit}
+import org.openjdk.jmh.annotations.{Benchmark, BenchmarkMode, Mode, OutputTimeUnit}
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.duration._
