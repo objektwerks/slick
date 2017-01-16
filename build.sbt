@@ -29,6 +29,4 @@ scalacOptions ++= Seq(
   "-Xlint"
 )
 fork in test := true
-javaOptions += "-server -Xss1m -Xmx2g"
-
 enablePlugins(JmhPlugin)
