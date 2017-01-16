@@ -13,10 +13,14 @@ import scala.concurrent.duration._
 object Main {
   val config = DatabaseConfig.forConfig[H2Profile]("app", ConfigFactory.load("app.conf"))
   val repository = new Repository(config.db, 1 second)
+  import repository._
 
   def main(args: Array[String]) {
     println("Running benchmark...")
-    new PerformanceBenchMark(repository)
+    await(createSchema())
+    new PerformanceBenchMark()
+    await(dropSchema())
+    closeDatabase()
     println("Benchmark complete.")
   }
 }
@@ -24,17 +28,8 @@ object Main {
 @State(Scope.Thread)
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-class PerformanceBenchMark(@State(Scope.Thread) repository: Repository) {
-  import repository._
-
-  @Setup
-  def setup(): Unit = await(createSchema())
-
-  @TearDown
-  def teardown(): Unit = {
-    await(dropSchema())
-    closeDatabase()
-  }
+class PerformanceBenchMark() {
+  import Main.repository._
 
   @Benchmark
   def benchmark(): Int = await(addRole(Role(UUID.randomUUID.toString)))
