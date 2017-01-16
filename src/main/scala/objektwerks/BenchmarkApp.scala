@@ -10,7 +10,7 @@ import slick.jdbc.H2Profile
 
 import scala.concurrent.duration._
 
-object Main {
+object BenchmarkApp {
   val config = DatabaseConfig.forConfig[H2Profile]("app", ConfigFactory.load("app.conf"))
   val repository = new Repository(config.db, 1 second)
   import repository._
@@ -31,8 +31,8 @@ object Main {
 @Warmup(iterations = 3)
 @Measurement(iterations = 3)
 @Fork(1)
-class PerformanceBenchmark() {
-  import Main.repository._
+class PeformanceBenchmark() {
+  import BenchmarkApp.repository._
 
   @Benchmark
   def role(): Int = await(addRole(Role(UUID.randomUUID.toString)))
