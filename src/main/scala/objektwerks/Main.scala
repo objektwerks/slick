@@ -7,7 +7,7 @@ import slick.jdbc.H2Profile
 import scala.concurrent.duration._
 
 object Main extends App {
-  val config = DatabaseConfig.forConfig[H2Profile]("test", ConfigFactory.load("test.conf"))
+  val config = DatabaseConfig.forConfig[H2Profile]("app", ConfigFactory.load("app.conf"))
   val repository = new Repository(config.db, 1 second)
   import repository._
 
