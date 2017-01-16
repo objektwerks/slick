@@ -1,20 +1,20 @@
 package objektwerks
 
-import java.util.concurrent.TimeUnit
-
 import com.typesafe.config.ConfigFactory
-import org.openjdk.jmh.annotations.{Benchmark, BenchmarkMode, Mode, OutputTimeUnit}
+import org.openjdk.jmh.annotations.Benchmark
 import slick.basic.DatabaseConfig
 import slick.jdbc.H2Profile
 
 import scala.concurrent.duration._
 
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@BenchmarkMode(Array(Mode.Throughput))
-object Main extends App {
+object Main {
   val config = DatabaseConfig.forConfig[H2Profile]("app", ConfigFactory.load("app.conf"))
   val repository = new Repository(config.db, 1 second)
   import repository._
+
+  def main(args: Array[String]) {
+    println("Running benchmark...")
+  }
 
   await(createSchema())
 
