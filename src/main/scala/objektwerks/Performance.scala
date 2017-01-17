@@ -21,7 +21,7 @@ class Performance() {
   import Peformance.repository._
 
   @Benchmark
-  def role(): Int = await(addRole(UUID.randomUUID.toString))
+  def role(): Int = await(addRole(Role(UUID.randomUUID.toString)))
 }
 
 object Peformance extends LazyLogging {
