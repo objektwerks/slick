@@ -41,32 +41,34 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
   val compiledListCustomers = Compiled { customers.sortBy(_.name.asc) }
   def listCustomers(): Future[Seq[Customer]] = db.run(compiledListCustomers.result)
 
-  def listContractors(customer: Customer): Future[Seq[Contractor]] = db.run(contractors.filter(_.id === customer.id).sortBy(_.name.asc).result)
+  val compiledListContractors = Compiled { customerId: Rep[Int] => contractors.filter(_.id === customerId).sortBy(_.name.asc) }
+  def listContractors(customerId: Int): Future[Seq[Contractor]] = db.run(compiledListContractors(customerId).result)
 
-  def listTasks(contractor: Contractor): Future[Seq[Task]] = db.run(tasks.filter(_.id === contractor.id).sortBy(_.started.asc).result)
+  val compiledListTasks = Compiled { contractorId: Rep[Int] => tasks.filter(_.id === contractorId).sortBy(_.started.asc) }
+  def listTasks(contractorId: Int): Future[Seq[Task]] = db.run(compiledListTasks(contractorId).result)
 
-  def listCustomersContractors(): Future[Seq[(String, String)]] = {
-    val query = for {
+  val compiledListCustomersContractors = Compiled {
+    for {
       c <- customers
       t <- contractors if c.id === t.customerId
     } yield (c.name, t.name)
-    db.run(query.result)
   }
+  def listCustomersContractors(): Future[Seq[(String, String)]] = db.run(compiledListCustomersContractors.result)
 
-  def listContractorsTasks(): Future[Seq[(String, String)]] = {
-    val query = for {
+  val compiledListContractorsTasks = Compiled {
+    for {
       c <- contractors
       t <- tasks if c.id === t.contractorId
     } yield (c.name, t.task)
-    db.run(query.result)
   }
+  def listContractorsTasks(): Future[Seq[(String, String)]] = db.run(compiledListContractorsTasks.result)
 
-  def listContractorsSuppliers(): Future[Seq[(String, String)]] = {
-    val query = for {
+  val compiledListContractorsSuppliers = Compiled {
+    for {
       c <- contractors
       s <- suppliers
       cs <- contractorsSuppliers if c.id === cs.contractorId && s.id === cs.supplierId
     } yield (c.name, s.name)
-    db.run(query.result)
   }
+  def listContractorsSuppliers(): Future[Seq[(String, String)]] = db.run(compiledListContractorsSuppliers.result)
 }
