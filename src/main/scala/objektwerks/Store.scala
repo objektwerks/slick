@@ -13,6 +13,7 @@ object Store extends LazyLogging {
   import repository._
 
   await(createSchema())
+
   sys.addShutdownHook {
     await(dropSchema())
     closeDatabase()
