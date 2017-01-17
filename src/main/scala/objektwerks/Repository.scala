@@ -26,15 +26,20 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id.isEmpty) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
 
-  def findCustomer(name: String): Future[Option[Customer]] = db.run(customers.filter(_.name === name).result.headOption)
+  val compiledFindCustomer = Compiled { name: Rep[String] => customers.filter(_.name === name) }
+  def findCustomer(name: String): Future[Option[Customer]] = db.run(compiledFindCustomer(name).result.headOption)
 
-  def findContractor(name: String): Future[Option[Contractor]] = db.run(contractors.filter(_.name === name).result.headOption)
+  val compiledFindContractor = Compiled { name: Rep[String] => contractors.filter(_.name === name) }
+  def findContractor(name: String): Future[Option[Contractor]] = db.run(compiledFindContractor(name).result.headOption)
 
-  def findSupplier(name: String): Future[Option[Supplier]] = db.run(suppliers.filter(_.name === name).result.headOption)
+  val compiledFindSupplier = Compiled { name: Rep[String] => suppliers.filter(_.name === name) }
+  def findSupplier(name: String): Future[Option[Supplier]] = db.run(compiledFindSupplier(name).result.headOption)
 
-  def listRoles(): Future[Seq[String]] = db.run(roles.map(_.role).sortBy(_.asc).result)
+  val compiledListRoles = Compiled { roles.map(_.role).sortBy(_.asc) }
+  def listRoles(): Future[Seq[String]] = db.run(compiledListRoles.result)
 
-  def listCustomers(): Future[Seq[Customer]] = db.run(customers.sortBy(_.name.asc).result)
+  val compiledListCustomers = Compiled { customers.sortBy(_.name.asc) }
+  def listCustomers(): Future[Seq[Customer]] = db.run(compiledListCustomers.result)
 
   def listContractors(customer: Customer): Future[Seq[Contractor]] = db.run(contractors.filter(_.id === customer.id).sortBy(_.name.asc).result)
 
