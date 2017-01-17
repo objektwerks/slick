@@ -8,6 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.openjdk.jmh.annotations._
 import slick.basic.DatabaseConfig
 import slick.jdbc.H2Profile
+
 import scala.concurrent.duration._
 
 @State(Scope.Thread)
@@ -20,7 +21,7 @@ class Performance() {
   import Peformance.repository._
 
   @Benchmark
-  def role(): Int = await(addRole(Role(UUID.randomUUID.toString)))
+  def role(): Int = await(addRole(UUID.randomUUID.toString))
 }
 
 object Peformance extends LazyLogging {
