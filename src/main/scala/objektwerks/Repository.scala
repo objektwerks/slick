@@ -16,7 +16,7 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   def addRole(role: Role): Future[Int] = db.run(roles += role)
 
-  def addContractorSupplier(contractorSupplier: ContractorSupplier) = db.run(contractorsSuppliers += contractorSupplier)
+  def addContractorSupplier(contractorSupplier: ContractorSupplier): Future[Int] = db.run(contractorsSuppliers += contractorSupplier)
 
   def saveCustomer(customer: Customer): Future[Int] = if (customer.id.isEmpty) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
 
