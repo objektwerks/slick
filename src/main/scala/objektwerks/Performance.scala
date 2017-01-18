@@ -15,7 +15,7 @@ import scala.concurrent.duration._
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 3)
-@Measurement(iterations = 3)
+@Measurement(iterations = 9)
 @Fork(1)
 class Performance() {
   import Peformance.repository._
