@@ -20,21 +20,21 @@ import scala.concurrent.duration._
 class Performance() {
   import Peformance.repository._
 
+  @Setup
+  def setup() = await(createSchema())
+
+  @TearDown
+  def teardown() = await(dropSchema())
+
   @Benchmark
   def role(): Int = await(addRole(Role(UUID.randomUUID.toString)))
+
+  @Benchmark
+  def roles(): Seq[String] = await(listRoles())
 }
 
 object Peformance extends LazyLogging {
   val config = DatabaseConfig.forConfig[H2Profile]("app", ConfigFactory.load("app.conf"))
   val repository = new Repository(config.db, 1 second)
-  import repository._
-
-  await(createSchema())
-
-  sys.addShutdownHook {
-    await(dropSchema())
-    closeDatabase()
-  }
-
-  logger.info("Database initialized.")
+  logger.info("Database initialized for performance testing.")
 }
