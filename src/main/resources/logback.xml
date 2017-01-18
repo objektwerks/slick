@@ -8,7 +8,7 @@
             <pattern>%-5p: %d{ISO8601} [%t] %m%n</pattern>
         </encoder>
     </appender>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="file"/>
     </root>
 </configuration>
