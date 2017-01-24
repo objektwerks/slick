@@ -61,16 +61,16 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     exec(customers.save(george.copy(name = "george washington")))
     exec(customers.save(john.copy(name = "john adams")))
 
-    val barney = await(findContractor("barney")).get
-    val fred = await(findContractor("fred")).get
+    val barney = exec(contractors.find("barney")).get
+    val fred = exec(contractors.find("fred")).get
     barney.id shouldBe 1
     fred.id shouldBe 2
 
     exec(contractors.save(barney.copy(name = "barney rebel")))
     exec(contractors.save(fred.copy(name = "fred flintstone")))
 
-    val homeDepot = await(findSupplier("homedepot")).get
-    val lowes = await(findSupplier("lowe")).get
+    val homeDepot = exec(suppliers.find("homedepot")).get
+    val lowes = exec(suppliers.find("lowe")).get
     homeDepot.id shouldBe 1
     lowes.id shouldBe 2
 
@@ -85,10 +85,10 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     exec(roles.list()).size shouldBe 2
 
     customerList foreach { customer =>
-      val contractorList = await(listContractors(customer.id))
+      val contractorList = exec(contractors.list(customer.id))
       contractorList.size shouldBe 1
       contractorList foreach { contractor =>
-        val taskList = await(listTasks(contractor.id))
+        val taskList = exec(tasks.list(contractor.id))
         taskList.size shouldBe 1
         taskList foreach { task =>
           val completedTask = task.copy(completed = LocalDateTime.now)

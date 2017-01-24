@@ -31,7 +31,7 @@ trait Schema {
     def * = (name, address, phone, email, id) <> (Customer.tupled, Customer.unapply)
   }
   object customers extends TableQuery(new Customers(_)) {
-    val compiledFind = Compiled { name: Rep[String] => this.filter(_.name === name) }
+    val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
     val compiledList = Compiled { sortBy(_.name.asc) }
     def save(customer: Customer) = if (customer.id == 0) (this returning this.map(_.id)) += customer else this.insertOrUpdate(customer)
     def find(name: String) = compiledFind(name).result.headOption
@@ -60,7 +60,11 @@ trait Schema {
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
   object contractors extends TableQuery(new Contractors(_)) {
+    val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
+    val compiledList = Compiled { customerId: Rep[Int] => filter(_.id === customerId).sortBy(_.name.asc) }
     def save(contractor: Contractor) = if (contractor.id == 0) (this returning this.map(_.id)) += contractor else this.insertOrUpdate(contractor)
+    def find(name: String) = compiledFind(name).result.headOption
+    def list(customerId: Int) = compiledList(customerId).result
   }
 
   case class Task(task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: LocalDateTime = LocalDateTime.now, contractorId: Int, id: Int = 0)
@@ -75,7 +79,9 @@ trait Schema {
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
   object tasks extends TableQuery(new Tasks(_)) {
+    val compiledList = Compiled { contractorId: Rep[Int] => filter(_.id === contractorId).sortBy(_.started.asc) }
     def save(task: Task) = if (task.id == 0) (this returning this.map(_.id)) += task else this.insertOrUpdate(task)
+    def list(contractorId: Int) = compiledList(contractorId).result
   }
 
   case class Supplier(name: String, address: String, phone: String, email: String, id: Int = 0)
@@ -88,7 +94,9 @@ trait Schema {
     def * = (name, address, phone, email, id) <> (Supplier.tupled, Supplier.unapply)
   }
   object suppliers extends TableQuery(new Suppliers(_)) {
+    val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
     def save(supplier: Supplier) = if (supplier.id == 0) (this returning this.map(_.id)) += supplier else this.insertOrUpdate(supplier)
+    def find(name: String) = compiledFind(name).result.headOption
   }
 
   case class ContractorSupplier(contractorId: Int, supplierId: Int)

@@ -18,18 +18,6 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   def closeDatabase() = db.close()
 
-  val compiledFindContractor = Compiled { name: Rep[String] => contractors.filter(_.name === name) }
-  def findContractor(name: String): Future[Option[Contractor]] = db.run(compiledFindContractor(name).result.headOption)
-
-  val compiledFindSupplier = Compiled { name: Rep[String] => suppliers.filter(_.name === name) }
-  def findSupplier(name: String): Future[Option[Supplier]] = db.run(compiledFindSupplier(name).result.headOption)
-
-  val compiledListContractors = Compiled { customerId: Rep[Int] => contractors.filter(_.id === customerId).sortBy(_.name.asc) }
-  def listContractors(customerId: Int): Future[Seq[Contractor]] = db.run(compiledListContractors(customerId).result)
-
-  val compiledListTasks = Compiled { contractorId: Rep[Int] => tasks.filter(_.id === contractorId).sortBy(_.started.asc) }
-  def listTasks(contractorId: Int): Future[Seq[Task]] = db.run(compiledListTasks(contractorId).result)
-
   val compiledListCustomersContractors = Compiled {
     for {
       c <- customers
