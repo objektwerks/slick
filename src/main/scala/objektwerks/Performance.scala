@@ -21,10 +21,10 @@ class Performance() {
   import Peformance.repository._
 
   @Setup
-  def setup() = await(createSchema())
+  def setup() = createSchema()
 
   @TearDown
-  def teardown() = await(dropSchema())
+  def teardown() = dropSchema()
 
   @Benchmark
   def role(): Int = await(addRole(Role(UUID.randomUUID.toString)))

@@ -9,6 +9,7 @@ import slick.jdbc.H2Profile.api._
 object Recurrence extends Enumeration {
   type Recurrence = Value
   val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
+  implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
 }
 
 /**
@@ -19,7 +20,6 @@ object Recurrence extends Enumeration {
  */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
-  implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
 
   case class Customer(name: String, address: String, phone: String, email: String, id: Int = 0)
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
@@ -30,12 +30,14 @@ trait Schema {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def * = (name, address, phone, email, id) <> (Customer.tupled, Customer.unapply)
   }
+  val customers = TableQuery[Customers]
 
   case class Role(role: String)
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
     def role = column[String]("role", O.PrimaryKey)
     def * = role <> (Role.apply, Role.unapply)
   }
+  val roles = TableQuery[Roles]
 
   case class Contractor(name: String, role: String, customerId: Int, id: Int = 0)
   class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
@@ -47,6 +49,7 @@ trait Schema {
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.role)
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
+  val contractors = TableQuery[Contractors]
 
   case class Task(task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: LocalDateTime = LocalDateTime.now, contractorId: Int, id: Int = 0)
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
@@ -59,6 +62,7 @@ trait Schema {
     def * = (task, recurrence, started, completed, contractorId, id) <> (Task.tupled, Task.unapply)
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
+  val tasks = TableQuery[Tasks]
 
   case class Supplier(name: String, address: String, phone: String, email: String, id: Int = 0)
   class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
@@ -69,6 +73,7 @@ trait Schema {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def * = (name, address, phone, email, id) <> (Supplier.tupled, Supplier.unapply)
   }
+  val suppliers = TableQuery[Suppliers]
 
   case class ContractorSupplier(contractorId: Int, supplierId: Int)
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
@@ -79,4 +84,5 @@ trait Schema {
     def contractorFk = foreignKey("contractor_supplier_fk", contractorId, TableQuery[Contractors])(_.id)
     def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Suppliers])(_.id)
   }
+  val contractorsSuppliers = TableQuery[ContractorsSuppliers]
 }
