@@ -7,7 +7,7 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import org.openjdk.jmh.annotations._
 import slick.basic.DatabaseConfig
-import slick.jdbc.H2Profile
+import slick.jdbc.{H2Profile, JdbcProfile}
 
 import scala.concurrent.duration._
 
@@ -34,7 +34,7 @@ class Performance() {
 }
 
 object Peformance extends LazyLogging {
-  val config = DatabaseConfig.forConfig[H2Profile]("app", ConfigFactory.load("app.conf"))
-  val repository = new Repository(config.db, 1 second)
+  val config = DatabaseConfig.forConfig[JdbcProfile]("app", ConfigFactory.load("app.conf"))
+  val repository = new Repository(config, H2Profile, 1 second)
   logger.info("Database initialized for performance testing.")
 }

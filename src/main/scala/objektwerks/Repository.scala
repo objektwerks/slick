@@ -4,7 +4,8 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 import objektwerks.Recurrence.Recurrence
-import slick.jdbc.H2Profile.api._
+import slick.basic.DatabaseConfig
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -12,7 +13,6 @@ import scala.concurrent.duration._
 object Recurrence extends Enumeration {
   type Recurrence = Value
   val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
-  implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
 }
 
 /**
@@ -21,9 +21,13 @@ object Recurrence extends Enumeration {
   * Task 1 ---> 1 Recurrence
   * Contractor * <---> * Supplier
   */
-class Repository(db: Database, awaitDuration: Duration) {
+class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfile, val awaitDuration: Duration) {
+  import profile.api._
+
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
+  implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
+  val db = config.db
 
   def exec[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
 
