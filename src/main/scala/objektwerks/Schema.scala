@@ -20,6 +20,11 @@ object Recurrence extends Enumeration {
  */
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
+  val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
+
+  def createSchema() = DBIO.seq(schema.create)
+
+  def dropSchema() = DBIO.seq(schema.drop)
 
   case class Customer(name: String, address: String, phone: String, email: String, id: Int = 0)
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
@@ -33,9 +38,16 @@ trait Schema {
   object customers extends TableQuery(new Customers(_)) {
     val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
     val compiledList = Compiled { sortBy(_.name.asc) }
+    val compiledListCustomersContractors = Compiled {
+      for {
+        c <- this
+        t <- contractors if c.id === t.customerId
+      } yield (c.name, t.name)
+    }
     def save(customer: Customer) = if (customer.id == 0) (this returning this.map(_.id)) += customer else this.insertOrUpdate(customer)
     def find(name: String) = compiledFind(name).result.headOption
     def list() = compiledList.result
+    def listCustomersContractors() = compiledListCustomersContractors.result
   }
 
   case class Role(role: String)
@@ -62,9 +74,16 @@ trait Schema {
   object contractors extends TableQuery(new Contractors(_)) {
     val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
     val compiledList = Compiled { customerId: Rep[Int] => filter(_.id === customerId).sortBy(_.name.asc) }
+    val compiledListContractorsTasks = Compiled {
+      for {
+        c <- this
+        t <- tasks if c.id === t.contractorId
+      } yield (c.name, t.task)
+    }
     def save(contractor: Contractor) = if (contractor.id == 0) (this returning this.map(_.id)) += contractor else this.insertOrUpdate(contractor)
     def find(name: String) = compiledFind(name).result.headOption
     def list(customerId: Int) = compiledList(customerId).result
+    def listContractorsTasks() = compiledListContractorsTasks.result
   }
 
   case class Task(task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: LocalDateTime = LocalDateTime.now, contractorId: Int, id: Int = 0)
@@ -109,6 +128,14 @@ trait Schema {
     def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Suppliers])(_.id)
   }
   object contractorsSuppliers extends TableQuery(new ContractorsSuppliers(_)) {
+    val compiledListContractorsSuppliers = Compiled {
+      for {
+        c <- contractors
+        s <- suppliers
+        cs <- this if c.id === cs.contractorId && s.id === cs.supplierId
+      } yield (c.name, s.name)
+    }
     def add(contractorSupplier: ContractorSupplier) = this += contractorSupplier
+    def listContractorsSuppliers() = compiledListContractorsSuppliers.result
   }
 }
