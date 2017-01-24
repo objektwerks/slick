@@ -3,17 +3,11 @@ package objektwerks
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
-import objektwerks.Recurrence.Recurrence
 import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-
-object Recurrence extends Enumeration {
-  type Recurrence = Value
-  val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
-}
 
 /**
   * Customer 1 ---> * Contractor 1 ---> * Task
@@ -25,7 +19,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   import profile.api._
 
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
-  implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
   val db = config.db
 
@@ -97,6 +90,13 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
     def listContractorsTasks() = compiledListContractorsTasks.result
   }
 
+  object Recurrence extends Enumeration {
+    type Recurrence = Value
+    val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
+    implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
+  }
+
+  import Recurrence._
   case class Task(task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: LocalDateTime = LocalDateTime.now, contractorId: Int, id: Int = 0)
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def task = column[String]("task")
