@@ -26,9 +26,9 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
 
   def closeRepository() = db.close()
 
-  def createSchema() = DBIO.seq(schema.create)
+  def createSchema() = exec(DBIO.seq(schema.create))
 
-  def dropSchema() = DBIO.seq(schema.drop)
+  def dropSchema() = exec(DBIO.seq(schema.drop))
 
   case class Customer(name: String, address: String, phone: String, email: String, id: Int = 0)
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
