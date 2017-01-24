@@ -18,8 +18,6 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   def closeDatabase() = db.close()
 
-  def addRole(role: Role): Future[Int] = db.run(roles += role)
-
   def addContractorSupplier(contractorSupplier: ContractorSupplier): Future[Int] = db.run(contractorsSuppliers += contractorSupplier)
 
   def saveCustomer(customer: Customer): Future[Int] = if (customer.id == 0) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
@@ -38,9 +36,6 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   val compiledFindSupplier = Compiled { name: Rep[String] => suppliers.filter(_.name === name) }
   def findSupplier(name: String): Future[Option[Supplier]] = db.run(compiledFindSupplier(name).result.headOption)
-
-  val compiledListRoles = Compiled { roles.map(_.role).sortBy(_.asc) }
-  def listRoles(): Future[Seq[String]] = db.run(compiledListRoles.result)
 
   val compiledListCustomers = Compiled { customers.sortBy(_.name.asc) }
   def listCustomers(): Future[Seq[Customer]] = db.run(compiledListCustomers.result)

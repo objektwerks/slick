@@ -27,10 +27,10 @@ class Performance() {
   def teardown() = dropSchema()
 
   @Benchmark
-  def role(): Int = await(addRole(Role(UUID.randomUUID.toString)))
+  def addRole(): Int = exec(roles.add(Role(UUID.randomUUID.toString)))
 
   @Benchmark
-  def roles(): Seq[String] = await(listRoles())
+  def listRoles(): Seq[String] = exec(roles.list())
 }
 
 object Peformance extends LazyLogging {

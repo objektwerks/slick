@@ -37,7 +37,11 @@ trait Schema {
     def role = column[String]("role", O.PrimaryKey)
     def * = role <> (Role.apply, Role.unapply)
   }
-  val roles = TableQuery[Roles]
+  object roles extends TableQuery(new Roles(_)) {
+    val compiledList = Compiled { map(_.role).sortBy(_.asc) }
+    def add(role: Role) = roles += role
+    def list() = compiledList.result
+  }
 
   case class Contractor(name: String, role: String, customerId: Int, id: Int = 0)
   class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
