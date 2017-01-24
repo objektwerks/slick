@@ -6,6 +6,14 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
 class Repository(db: Database, awaitDuration: Duration) extends Schema {
+  val customers = TableQuery[Customers]
+  val roles = TableQuery[Roles]
+  val contractors = TableQuery[Contractors]
+  val tasks = TableQuery[Tasks]
+  val suppliers = TableQuery[Suppliers]
+  val contractorsSuppliers = TableQuery[ContractorsSuppliers]
+  val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
+
   def await[T](future: Future[T]): T = Await.result(future, awaitDuration)
 
   def exec[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)

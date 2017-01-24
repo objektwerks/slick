@@ -20,16 +20,8 @@ object Recurrence extends Enumeration {
 trait Schema {
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
   implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
-  val customers = TableQuery[Customers]
-  val roles = TableQuery[Roles]
-  val contractors = TableQuery[Contractors]
-  val tasks = TableQuery[Tasks]
-  val suppliers = TableQuery[Suppliers]
-  val contractorsSuppliers = TableQuery[ContractorsSuppliers]
-  val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
 
   case class Customer(name: String, address: String, phone: String, email: String, id: Int = 0)
-
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
     def name = column[String]("name")
     def address = column[String]("address")
@@ -40,14 +32,12 @@ trait Schema {
   }
 
   case class Role(role: String)
-
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
     def role = column[String]("role", O.PrimaryKey)
     def * = role <> (Role.apply, Role.unapply)
   }
 
   case class Contractor(name: String, role: String, customerId: Int, id: Int = 0)
-
   class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
     def name = column[String]("name", O.Unique)
     def role = column[String]("role")
@@ -59,7 +49,6 @@ trait Schema {
   }
 
   case class Task(task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: LocalDateTime = LocalDateTime.now, contractorId: Int, id: Int = 0)
-
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def task = column[String]("task")
     def recurrence = column[Recurrence]("recurrence")
@@ -72,7 +61,6 @@ trait Schema {
   }
 
   case class Supplier(name: String, address: String, phone: String, email: String, id: Int = 0)
-
   class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
     def name = column[String]("name")
     def address = column[String]("address")
@@ -83,7 +71,6 @@ trait Schema {
   }
 
   case class ContractorSupplier(contractorId: Int, supplierId: Int)
-
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")
     def supplierId = column[Int]("supplier_id")
