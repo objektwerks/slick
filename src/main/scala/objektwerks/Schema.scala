@@ -30,7 +30,13 @@ trait Schema {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def * = (name, address, phone, email, id) <> (Customer.tupled, Customer.unapply)
   }
-  val customers = TableQuery[Customers]
+  object customers extends TableQuery(new Customers(_)) {
+    val compiledFind = Compiled { name: Rep[String] => this.filter(_.name === name) }
+    val compiledList = Compiled { sortBy(_.name.asc) }
+    def save(customer: Customer) = if (customer.id == 0) (this returning this.map(_.id)) += customer else this.insertOrUpdate(customer)
+    def find(name: String) = compiledFind(name).result.headOption
+    def list() = compiledList.result
+  }
 
   case class Role(role: String)
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
@@ -39,7 +45,7 @@ trait Schema {
   }
   object roles extends TableQuery(new Roles(_)) {
     val compiledList = Compiled { map(_.role).sortBy(_.asc) }
-    def add(role: Role) = roles += role
+    def add(role: Role) = this += role
     def list() = compiledList.result
   }
 
@@ -53,7 +59,9 @@ trait Schema {
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.role)
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
-  val contractors = TableQuery[Contractors]
+  object contractors extends TableQuery(new Contractors(_)) {
+    def save(contractor: Contractor) = if (contractor.id == 0) (this returning this.map(_.id)) += contractor else this.insertOrUpdate(contractor)
+  }
 
   case class Task(task: String, recurrence: Recurrence, started: LocalDateTime = LocalDateTime.now, completed: LocalDateTime = LocalDateTime.now, contractorId: Int, id: Int = 0)
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
@@ -66,7 +74,9 @@ trait Schema {
     def * = (task, recurrence, started, completed, contractorId, id) <> (Task.tupled, Task.unapply)
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
-  val tasks = TableQuery[Tasks]
+  object tasks extends TableQuery(new Tasks(_)) {
+    def save(task: Task) = if (task.id == 0) (this returning this.map(_.id)) += task else this.insertOrUpdate(task)
+  }
 
   case class Supplier(name: String, address: String, phone: String, email: String, id: Int = 0)
   class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
@@ -77,7 +87,9 @@ trait Schema {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def * = (name, address, phone, email, id) <> (Supplier.tupled, Supplier.unapply)
   }
-  val suppliers = TableQuery[Suppliers]
+  object suppliers extends TableQuery(new Suppliers(_)) {
+    def save(supplier: Supplier) = if (supplier.id == 0) (this returning this.map(_.id)) += supplier else this.insertOrUpdate(supplier)
+  }
 
   case class ContractorSupplier(contractorId: Int, supplierId: Int)
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
@@ -88,5 +100,7 @@ trait Schema {
     def contractorFk = foreignKey("contractor_supplier_fk", contractorId, TableQuery[Contractors])(_.id)
     def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Suppliers])(_.id)
   }
-  val contractorsSuppliers = TableQuery[ContractorsSuppliers]
+  object contractorsSuppliers extends TableQuery(new ContractorsSuppliers(_)) {
+    def add(contractorSupplier: ContractorSupplier) = this += contractorSupplier
+  }
 }

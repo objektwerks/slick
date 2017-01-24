@@ -18,27 +18,11 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   def closeDatabase() = db.close()
 
-  def addContractorSupplier(contractorSupplier: ContractorSupplier): Future[Int] = db.run(contractorsSuppliers += contractorSupplier)
-
-  def saveCustomer(customer: Customer): Future[Int] = if (customer.id == 0) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
-
-  def saveContractor(contractor: Contractor): Future[Int] = if (contractor.id == 0) db.run((contractors returning contractors.map(_.id)) += contractor) else db.run(contractors.insertOrUpdate(contractor))
-
-  def saveTask(task: Task): Future[Int] = if (task.id == 0) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
-
-  def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id == 0) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
-
-  val compiledFindCustomer = Compiled { name: Rep[String] => customers.filter(_.name === name) }
-  def findCustomer(name: String): Future[Option[Customer]] = db.run(compiledFindCustomer(name).result.headOption)
-
   val compiledFindContractor = Compiled { name: Rep[String] => contractors.filter(_.name === name) }
   def findContractor(name: String): Future[Option[Contractor]] = db.run(compiledFindContractor(name).result.headOption)
 
   val compiledFindSupplier = Compiled { name: Rep[String] => suppliers.filter(_.name === name) }
   def findSupplier(name: String): Future[Option[Supplier]] = db.run(compiledFindSupplier(name).result.headOption)
-
-  val compiledListCustomers = Compiled { customers.sortBy(_.name.asc) }
-  def listCustomers(): Future[Seq[Customer]] = db.run(compiledListCustomers.result)
 
   val compiledListContractors = Compiled { customerId: Rep[Int] => contractors.filter(_.id === customerId).sortBy(_.name.asc) }
   def listContractors(customerId: Int): Future[Seq[Contractor]] = db.run(compiledListContractors(customerId).result)
