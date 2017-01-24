@@ -26,8 +26,8 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add > save") {
-    val georgeCustomerId = await(saveCustomer(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com")))
-    val johnCustomerId = await(saveCustomer(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com")))
+    val georgeCustomerId = await(saveCustomer(Customer("george", "1 Mount Vernon., Mount Vernon, VA 22121", "17037802000", "gw@gov.com")))
+    val johnCustomerId = await(saveCustomer(Customer("john", "1 Farm Rd., Penn Hill, MA 02169", "16177701175", "ja@gov.com")))
     georgeCustomerId shouldBe 1
     johnCustomerId shouldBe 2
 
@@ -36,18 +36,18 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     await(addRole(poolBoy))
     await(addRole(yardBoy))
 
-    val barneyContractorId = await(saveContractor(Contractor(customerId = georgeCustomerId, name = "barney", role = poolBoy.role)))
-    val fredContractorId = await(saveContractor(Contractor(customerId = johnCustomerId, name = "fred", role = yardBoy.role)))
+    val barneyContractorId = await(saveContractor(Contractor("barney", poolBoy.role, georgeCustomerId)))
+    val fredContractorId = await(saveContractor(Contractor("fred", yardBoy.role, johnCustomerId)))
     barneyContractorId shouldBe 1
     fredContractorId shouldBe 2
 
-    val barneyTaskId = await(saveTask(Task(contractorId = barneyContractorId, task = "clean pool", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
-    val fredTaskId = await(saveTask(Task(contractorId = fredContractorId, task = "mow yard", recurrence = Recurrence.weekly, completed = Some(LocalDateTime.now))))
+    val barneyTaskId = await(saveTask(Task(task = "clean pool", recurrence = Recurrence.weekly, contractorId = barneyContractorId)))
+    val fredTaskId = await(saveTask(Task(task = "mow yard", recurrence = Recurrence.weekly, contractorId = fredContractorId)))
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
 
-    val homeDepotId = await(saveSupplier(Supplier(name = "homedepot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com")))
-    val lowesId = await(saveSupplier(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com")))
+    val homeDepotId = await(saveSupplier(Supplier("homedepot", "1 Home Depot Way, Placida, FL 33949", "19413456789", "hd@hd.com")))
+    val lowesId = await(saveSupplier(Supplier("lowe", "1 Lowes Way, Placida, FL 33949", "19419874321", "lw@lw.com")))
     await(addContractorSupplier(ContractorSupplier(barneyContractorId, homeDepotId)))
     await(addContractorSupplier(ContractorSupplier(fredContractorId, lowesId)))
   }
@@ -55,24 +55,24 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   test("find > save") {
     val george = await(findCustomer("george")).get
     val john = await(findCustomer("john")).get
-    george.id shouldBe Some(1)
-    john.id shouldBe Some(2)
+    george.id shouldBe 1
+    john.id shouldBe 2
 
     await(saveCustomer(george.copy(name = "george washington")))
     await(saveCustomer(john.copy(name = "john adams")))
 
     val barney = await(findContractor("barney")).get
     val fred = await(findContractor("fred")).get
-    barney.id shouldBe Some(1)
-    fred.id shouldBe Some(2)
+    barney.id shouldBe 1
+    fred.id shouldBe 2
 
     await(saveContractor(barney.copy(name = "barney rebel")))
     await(saveContractor(fred.copy(name = "fred flintstone")))
 
     val homeDepot = await(findSupplier("homedepot")).get
     val lowes = await(findSupplier("lowe")).get
-    homeDepot.id shouldBe Some(1)
-    lowes.id shouldBe Some(2)
+    homeDepot.id shouldBe 1
+    lowes.id shouldBe 2
 
     await(saveSupplier(homeDepot.copy(name = "home depot")))
     await(saveSupplier(lowes.copy(name = "lowes")))
@@ -86,13 +86,13 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     roles.size shouldBe 2
 
     customers foreach { customer =>
-      val contractors = await(listContractors(customer.id.get))
+      val contractors = await(listContractors(customer.id))
       contractors.size shouldBe 1
       contractors foreach { contractor =>
-        val tasks = await(listTasks(contractor.id.get))
+        val tasks = await(listTasks(contractor.id))
         tasks.size shouldBe 1
         tasks foreach { task =>
-          val completedTask = task.copy(completed = Some(LocalDateTime.now))
+          val completedTask = task.copy(completed = LocalDateTime.now)
           await(saveTask(completedTask))
         }
       }

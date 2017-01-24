@@ -8,6 +8,8 @@ import scala.concurrent.{Await, Future}
 class Repository(db: Database, awaitDuration: Duration) extends Schema {
   def await[T](future: Future[T]): T = Await.result(future, awaitDuration)
 
+  def exec[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
+
   def createSchema(): Future[Unit] = db.run(DBIO.seq(schema.create))
 
   def dropSchema(): Future[Unit] = db.run(DBIO.seq(schema.drop))
@@ -18,13 +20,13 @@ class Repository(db: Database, awaitDuration: Duration) extends Schema {
 
   def addContractorSupplier(contractorSupplier: ContractorSupplier): Future[Int] = db.run(contractorsSuppliers += contractorSupplier)
 
-  def saveCustomer(customer: Customer): Future[Int] = if (customer.id.isEmpty) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
+  def saveCustomer(customer: Customer): Future[Int] = if (customer.id == 0) db.run((customers returning customers.map(_.id)) += customer) else db.run(customers.insertOrUpdate(customer))
 
-  def saveContractor(contractor: Contractor): Future[Int] = if (contractor.id.isEmpty) db.run((contractors returning contractors.map(_.id)) += contractor) else db.run(contractors.insertOrUpdate(contractor))
+  def saveContractor(contractor: Contractor): Future[Int] = if (contractor.id == 0) db.run((contractors returning contractors.map(_.id)) += contractor) else db.run(contractors.insertOrUpdate(contractor))
 
-  def saveTask(task: Task): Future[Int] = if (task.id.isEmpty) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
+  def saveTask(task: Task): Future[Int] = if (task.id == 0) db.run((tasks returning tasks.map(_.id)) += task) else db.run(tasks.insertOrUpdate(task))
 
-  def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id.isEmpty) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
+  def saveSupplier(supplier: Supplier): Future[Int] = if (supplier.id == 0) db.run((suppliers returning suppliers.map(_.id)) += supplier) else db.run(suppliers.insertOrUpdate(supplier))
 
   val compiledFindCustomer = Compiled { name: Rep[String] => customers.filter(_.name === name) }
   def findCustomer(name: String): Future[Option[Customer]] = db.run(compiledFindCustomer(name).result.headOption)
