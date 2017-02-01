@@ -26,8 +26,8 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add > save") {
-    val georgeCustomerId = exec(customers.save(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com")))
-    val johnCustomerId = exec(customers.save(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com")))
+    val georgeCustomerId = exec(customers.save(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com"))).get
+    val johnCustomerId = exec(customers.save(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com"))).get
     georgeCustomerId shouldBe 1
     johnCustomerId shouldBe 2
 
@@ -36,18 +36,18 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
     exec(roles.add(poolBoy))
     exec(roles.add(yardBoy))
 
-    val barneyContractorId = exec(contractors.save(Contractor(customerId = georgeCustomerId, name = "barney", role = poolBoy.name)))
-    val fredContractorId = exec(contractors.save(Contractor(customerId = johnCustomerId, name = "fred", role = yardBoy.name)))
+    val barneyContractorId = exec(contractors.save(Contractor(customerId = georgeCustomerId, name = "barney", role = poolBoy.name))).get
+    val fredContractorId = exec(contractors.save(Contractor(customerId = johnCustomerId, name = "fred", role = yardBoy.name))).get
     barneyContractorId shouldBe 1
     fredContractorId shouldBe 2
 
-    val barneyTaskId = exec(tasks.save(Task( contractorId = barneyContractorId, task = "clean pool", recurrence = Recurrence.weekly)))
-    val fredTaskId = exec(tasks.save(Task(contractorId = fredContractorId, task = "mow yard", recurrence = Recurrence.weekly)))
+    val barneyTaskId = exec(tasks.save(Task( contractorId = barneyContractorId, task = "clean pool", recurrence = Recurrence.weekly))).get
+    val fredTaskId = exec(tasks.save(Task(contractorId = fredContractorId, task = "mow yard", recurrence = Recurrence.weekly))).get
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
 
-    val homeDepotId = exec(suppliers.save(Supplier(name = "homedepot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com")))
-    val lowesId = exec(suppliers.save(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com")))
+    val homeDepotId = exec(suppliers.save(Supplier(name = "homedepot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com"))).get
+    val lowesId = exec(suppliers.save(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com"))).get
     exec(contractorsSuppliers.add(ContractorSupplier(barneyContractorId, homeDepotId)))
     exec(contractorsSuppliers.add(ContractorSupplier(fredContractorId, lowesId)))
   }

@@ -48,7 +48,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
         t <- contractors if c.id === t.customerId
       } yield (c.name, t.name)
     }
-    def save(customer: Customer) = if (customer.id == 0) (this returning this.map(_.id)) += customer else this.insertOrUpdate(customer)
+    def save(customer: Customer) = (this returning this.map(_.id)).insertOrUpdate(customer)
     def find(name: String) = compiledFind(name).result.headOption
     def list() = compiledList.result
     def listCustomersContractors() = compiledListCustomersContractors.result
@@ -84,7 +84,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
         t <- tasks if c.id === t.contractorId
       } yield (c.name, t.task)
     }
-    def save(contractor: Contractor) = if (contractor.id == 0) (this returning this.map(_.id)) += contractor else this.insertOrUpdate(contractor)
+    def save(contractor: Contractor) = (this returning this.map(_.id)).insertOrUpdate(contractor)
     def find(name: String) = compiledFind(name).result.headOption
     def list(customerId: Int) = compiledList(customerId).result
     def listContractorsTasks() = compiledListContractorsTasks.result
@@ -110,7 +110,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   }
   object tasks extends TableQuery(new Tasks(_)) {
     val compiledList = Compiled { contractorId: Rep[Int] => filter(_.id === contractorId).sortBy(_.started.asc) }
-    def save(task: Task) = if (task.id == 0) (this returning this.map(_.id)) += task else this.insertOrUpdate(task)
+    def save(task: Task) = (this returning this.map(_.id)).insertOrUpdate(task)
     def list(contractorId: Int) = compiledList(contractorId).result
   }
 
@@ -125,7 +125,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   }
   object suppliers extends TableQuery(new Suppliers(_)) {
     val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
-    def save(supplier: Supplier) = if (supplier.id == 0) (this returning this.map(_.id)) += supplier else this.insertOrUpdate(supplier)
+    def save(supplier: Supplier) = (this returning this.map(_.id)).insertOrUpdate(supplier)
     def find(name: String) = compiledFind(name).result.headOption
   }
 
