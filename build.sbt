@@ -31,3 +31,4 @@ scalacOptions ++= Seq(
 )
 fork in test := true
 enablePlugins(JmhPlugin)
+clippyColorsEnabled := true
