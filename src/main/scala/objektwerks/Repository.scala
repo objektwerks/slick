@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
 /**
@@ -23,6 +23,8 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   val db = config.db
 
   def exec[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
+
+  def run[T](action: DBIO[T]): Future[T] = db.run(action)
 
   def closeRepository() = db.close()
 
