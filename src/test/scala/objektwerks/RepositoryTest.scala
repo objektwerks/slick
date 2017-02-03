@@ -26,86 +26,86 @@ class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("add > save") {
-    val georgeCustomerId = exec(customers.save(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com"))).get
-    val johnCustomerId = exec(customers.save(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com"))).get
+    val georgeCustomerId = await(customers.save(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com"))).get
+    val johnCustomerId = await(customers.save(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com"))).get
     georgeCustomerId shouldBe 1
     johnCustomerId shouldBe 2
 
     val poolBoy = Role(name = "pool boy")
     val yardBoy = Role(name = "yard boy")
-    exec(roles.add(poolBoy))
-    exec(roles.add(yardBoy))
+    await(roles.add(poolBoy))
+    await(roles.add(yardBoy))
 
-    val barneyContractorId = exec(contractors.save(Contractor(customerId = georgeCustomerId, name = "barney", role = poolBoy.name))).get
-    val fredContractorId = exec(contractors.save(Contractor(customerId = johnCustomerId, name = "fred", role = yardBoy.name))).get
+    val barneyContractorId = await(contractors.save(Contractor(customerId = georgeCustomerId, name = "barney", role = poolBoy.name))).get
+    val fredContractorId = await(contractors.save(Contractor(customerId = johnCustomerId, name = "fred", role = yardBoy.name))).get
     barneyContractorId shouldBe 1
     fredContractorId shouldBe 2
 
-    val barneyTaskId = exec(tasks.save(Task( contractorId = barneyContractorId, task = "clean pool", recurrence = Recurrence.weekly))).get
-    val fredTaskId = exec(tasks.save(Task(contractorId = fredContractorId, task = "mow yard", recurrence = Recurrence.weekly))).get
+    val barneyTaskId = await(tasks.save(Task( contractorId = barneyContractorId, task = "clean pool", recurrence = Recurrence.weekly))).get
+    val fredTaskId = await(tasks.save(Task(contractorId = fredContractorId, task = "mow yard", recurrence = Recurrence.weekly))).get
     barneyTaskId shouldBe 1
     fredTaskId shouldBe 2
 
-    val homeDepotId = exec(suppliers.save(Supplier(name = "homedepot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com"))).get
-    val lowesId = exec(suppliers.save(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com"))).get
-    exec(contractorsSuppliers.add(ContractorSupplier(barneyContractorId, homeDepotId)))
-    exec(contractorsSuppliers.add(ContractorSupplier(fredContractorId, lowesId)))
+    val homeDepotId = await(suppliers.save(Supplier(name = "homedepot", address = "1 Home Depot Way, Placida, FL 33949", phone = "19413456789", email = "hd@hd.com"))).get
+    val lowesId = await(suppliers.save(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com"))).get
+    await(contractorsSuppliers.add(ContractorSupplier(barneyContractorId, homeDepotId)))
+    await(contractorsSuppliers.add(ContractorSupplier(fredContractorId, lowesId)))
   }
 
   test("find > save") {
-    val george = exec(customers.find("george")).get
-    val john = exec(customers.find("john")).get
+    val george = await(customers.find("george")).get
+    val john = await(customers.find("john")).get
     george.id shouldBe 1
     john.id shouldBe 2
 
-    exec(customers.save(george.copy(name = "george washington")))
-    exec(customers.save(john.copy(name = "john adams")))
+    await(customers.save(george.copy(name = "george washington")))
+    await(customers.save(john.copy(name = "john adams")))
 
-    val barney = exec(contractors.find("barney")).get
-    val fred = exec(contractors.find("fred")).get
+    val barney = await(contractors.find("barney")).get
+    val fred = await(contractors.find("fred")).get
     barney.id shouldBe 1
     fred.id shouldBe 2
 
-    exec(contractors.save(barney.copy(name = "barney rebel")))
-    exec(contractors.save(fred.copy(name = "fred flintstone")))
+    await(contractors.save(barney.copy(name = "barney rebel")))
+    await(contractors.save(fred.copy(name = "fred flintstone")))
 
-    val homeDepot = exec(suppliers.find("homedepot")).get
-    val lowes = exec(suppliers.find("lowe")).get
+    val homeDepot = await(suppliers.find("homedepot")).get
+    val lowes = await(suppliers.find("lowe")).get
     homeDepot.id shouldBe 1
     lowes.id shouldBe 2
 
-    exec(suppliers.save(homeDepot.copy(name = "home depot")))
-    exec(suppliers.save(lowes.copy(name = "lowes")))
+    await(suppliers.save(homeDepot.copy(name = "home depot")))
+    await(suppliers.save(lowes.copy(name = "lowes")))
   }
 
   test("list") {
-    val customerList = exec(customers.list())
+    val customerList = await(customers.list())
     customerList.size shouldBe 2
 
-    exec(roles.list()).size shouldBe 2
+    await(roles.list()).size shouldBe 2
 
     customerList foreach { customer =>
-      val contractorList = exec(contractors.list(customer.id))
+      val contractorList = await(contractors.list(customer.id))
       contractorList.size shouldBe 1
       contractorList foreach { contractor =>
-        val taskList = exec(tasks.list(contractor.id))
+        val taskList = await(tasks.list(contractor.id))
         taskList.size shouldBe 1
         taskList foreach { task =>
           val completedTask = task.copy(completed = LocalDateTime.now)
-          exec(tasks.save(completedTask))
+          await(tasks.save(completedTask))
         }
       }
     }
 
-    val customersContractors = exec(customers.listCustomersContractors())
+    val customersContractors = await(customers.listCustomersContractors())
     customersContractors.size shouldBe 2
     customersContractors foreach println
 
-    val contractorsTasks = exec(contractors.listContractorsTasks())
+    val contractorsTasks = await(contractors.listContractorsTasks())
     contractorsTasks.size shouldBe 2
     contractorsTasks foreach println
 
-    val contractorsSuppliersList = exec(contractorsSuppliers.listContractorsSuppliers())
+    val contractorsSuppliersList = await(contractorsSuppliers.listContractorsSuppliers())
     contractorsSuppliersList.size shouldBe 2
     contractorsSuppliersList foreach println
   }

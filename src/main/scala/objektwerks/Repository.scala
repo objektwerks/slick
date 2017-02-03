@@ -22,15 +22,15 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
   val db = config.db
 
-  def exec[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
+  def await[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
 
-  def run[T](action: DBIO[T]): Future[T] = db.run(action)
+  def exec[T](action: DBIO[T]): Future[T] = db.run(action)
 
   def closeRepository() = db.close()
 
-  def createSchema() = exec(DBIO.seq(schema.create))
+  def createSchema() = await(DBIO.seq(schema.create))
 
-  def dropSchema() = exec(DBIO.seq(schema.drop))
+  def dropSchema() = await(DBIO.seq(schema.drop))
 
   case class Customer(id: Int = 0, name: String, address: String, phone: String, email: String)
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
