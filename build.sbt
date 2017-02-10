@@ -4,7 +4,7 @@ version := "0.1-SNAPSHOT"
 scalaVersion := "2.12.1"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 libraryDependencies ++= {
-  val slickVersion = "3.2.0-M2"
+  val slickVersion = "3.2.0-RC1"
   Seq(
     "com.typesafe.slick" % "slick_2.12" % slickVersion,
     "com.typesafe.slick" % "slick-hikaricp_2.12" % slickVersion,
