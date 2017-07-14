@@ -1,6 +1,6 @@
 Slick
 -----
->The purpose of this project is to test Slick 3.2 features.
+>The purpose of this project is to test basic Slick 3.2 features.
 
 Test
 ----
