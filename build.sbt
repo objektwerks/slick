@@ -1,7 +1,7 @@
 name := "slick"
 organization := "objketwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.6"
 libraryDependencies ++= {
   val slickVersion = "3.2.0"
   Seq(
@@ -10,7 +10,7 @@ libraryDependencies ++= {
     "com.h2database" % "h2" % "1.4.196",
     "com.typesafe.scala-logging" % "scala-logging_2.12" % "3.5.0",
     "ch.qos.logback" % "logback-classic" % "1.2.3",
-    "org.scalatest" % "scalatest_2.12" % "3.0.3" % "test"
+    "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test"
   )
 }
 scalacOptions ++= Seq(
