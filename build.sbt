@@ -1,9 +1,9 @@
 name := "slick"
 organization := "objketwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.12.9"
+scalaVersion := "2.12.10"
 libraryDependencies ++= {
-  val slickVersion = "3.3.2"
+  val slickVersion = "3.2.3"
   Seq(
     "com.typesafe.slick" %% "slick" % slickVersion,
     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
@@ -29,4 +29,3 @@ scalacOptions ++= Seq(
   "-Xlint"
 )
 enablePlugins(JmhPlugin)
-clippyColorsEnabled := true
