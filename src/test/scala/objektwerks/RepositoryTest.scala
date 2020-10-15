@@ -3,13 +3,18 @@ package objektwerks
 import java.time.LocalDateTime
 
 import com.typesafe.config.ConfigFactory
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+
 import slick.basic.DatabaseConfig
 import slick.jdbc.{H2Profile, JdbcProfile}
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
-class RepositoryTest extends FunSuite with BeforeAndAfterAll with Matchers {
+class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
   val config = DatabaseConfig.forConfig[JdbcProfile]("test", ConfigFactory.load("test.conf"))
   val repository = new Repository(config, H2Profile, 1 second)
   import repository._

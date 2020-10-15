@@ -143,9 +143,10 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   object contractorsSuppliers extends TableQuery(new ContractorsSuppliers(_)) {
     val compiledListContractorsSuppliers = Compiled {
       for {
-        c <- contractors
-        s <- suppliers
-        cs <- this if c.id === cs.contractorId && s.id === cs.supplierId
+        cs <- this
+        c  <- contractors
+        s  <- suppliers
+        if c.id === cs.contractorId && s.id === cs.supplierId
       } yield (c.name, s.name)
     }
     def add(contractorSupplier: ContractorSupplier) = this += contractorSupplier

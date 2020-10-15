@@ -5,11 +5,14 @@ import java.util.concurrent.TimeUnit
 
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
+
 import org.openjdk.jmh.annotations._
+
 import slick.basic.DatabaseConfig
 import slick.jdbc.{H2Profile, JdbcProfile}
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 @State(Scope.Thread)
 @BenchmarkMode(Array(Mode.AverageTime))
