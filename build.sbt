@@ -1,7 +1,7 @@
 name := "slick"
 organization := "objketwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.13.2"
+scalaVersion := "2.13.3"
 libraryDependencies ++= {
   val slickVersion = "3.3.3"
   Seq(

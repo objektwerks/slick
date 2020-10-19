@@ -39,7 +39,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
     def address = column[String]("address")
     def phone = column[String]("phone")
     def email = column[String]("email")
-    def * = (id, name, address, phone, email) <> (Customer.tupled, Customer.unapply)
+    def * = (id, name, address, phone, email).<>(Customer.tupled, Customer.unapply)
   }
   object customers extends TableQuery(new Customers(_)) {
     val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
@@ -59,7 +59,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   case class Role(name: String)
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
     def name = column[String]("name", O.PrimaryKey)
-    def * = name <> (Role.apply, Role.unapply)
+    def * = name.<>(Role.apply, Role.unapply)
   }
   object roles extends TableQuery(new Roles(_)) {
     val compiledList = Compiled { map(_.name).sortBy(_.asc) }
@@ -73,7 +73,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
     def customerId = column[Int]("customer_id")
     def name = column[String]("name", O.Unique)
     def role = column[String]("role")
-    def * = (id, customerId, name, role) <> (Contractor.tupled, Contractor.unapply)
+    def * = (id, customerId, name, role).<>(Contractor.tupled, Contractor.unapply)
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.name)
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
@@ -107,7 +107,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
     def recurrence = column[Recurrence]("recurrence")
     def started = column[LocalDateTime]("started")
     def completed = column[LocalDateTime]("completed")
-    def * = (id, contractorId, task, recurrence, started, completed) <> (Task.tupled, Task.unapply)
+    def * = (id, contractorId, task, recurrence, started, completed).<>(Task.tupled, Task.unapply)
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
   object tasks extends TableQuery(new Tasks(_)) {
@@ -123,7 +123,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
     def address = column[String]("address")
     def phone = column[String]("phone")
     def email = column[String]("email")
-    def * = (id, name, address, phone, email) <> (Supplier.tupled, Supplier.unapply)
+    def * = (id, name, address, phone, email).<>(Supplier.tupled, Supplier.unapply)
   }
   object suppliers extends TableQuery(new Suppliers(_)) {
     val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
@@ -135,7 +135,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")
     def supplierId = column[Int]("supplier_id")
-    def * = (contractorId, supplierId) <> (ContractorSupplier.tupled, ContractorSupplier.unapply)
+    def * = (contractorId, supplierId).<>(ContractorSupplier.tupled, ContractorSupplier.unapply)
     def pk = primaryKey("pk", (contractorId, supplierId))
     def contractorFk = foreignKey("contractor_supplier_fk", contractorId, TableQuery[Contractors])(_.id)
     def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Suppliers])(_.id)
