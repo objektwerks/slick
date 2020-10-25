@@ -25,28 +25,19 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
                  val profile: JdbcProfile,
                  val awaitDuration: Duration) {
   import profile.api._
+  import Recurrence._
 
   implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](ldt => Timestamp.valueOf(ldt), ts => ts.toLocalDateTime)
+  implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
   val db = config.db
 
   def await[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
-
   def exec[T](action: DBIO[T]): Future[T] = db.run(action)
-
   def close() = db.close()
-
   def createSchema() = await(DBIO.seq(schema.create))
-
   def dropSchema() = await(DBIO.seq(schema.drop))
 
-  sealed trait Entity extends Product with Serializable
-
-  case class Customer(id: Int = 0,
-                      name: String,
-                      address: String,
-                      phone: String, 
-                      email: String) extends Entity
   class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
@@ -70,7 +61,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def listCustomersContractors() = compiledListCustomersContractors.result
   }
 
-  case class Role(name: String) extends Entity
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
     def name = column[String]("name", O.PrimaryKey)
     def * = name.<>(Role.apply, Role.unapply)
@@ -81,10 +71,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def list() = compiledList.result
   }
 
-  case class Contractor(id: Int = 0, 
-                        customerId: Int, 
-                        name: String, 
-                        role: String) extends Entity
   class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def customerId = column[Int]("customer_id")
@@ -109,19 +95,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def listContractorsTasks() = compiledListContractorsTasks.result
   }
 
-  object Recurrence extends Enumeration {
-    type Recurrence = Value
-    val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
-    implicit val recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
-  }
-
-  import Recurrence._
-  case class Task(id: Int = 0, 
-                  contractorId: Int, 
-                  task: String, 
-                  recurrence: Recurrence, 
-                  started: LocalDateTime = LocalDateTime.now, 
-                  completed: LocalDateTime = LocalDateTime.now) extends Entity
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def contractorId = column[Int]("contractor_id")
@@ -138,11 +111,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def list(contractorId: Int) = compiledList(contractorId).result
   }
 
-  case class Supplier(id: Int = 0, 
-                      name: String, 
-                      address: String, 
-                      phone: String, 
-                      email: String) extends Entity
   class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
@@ -157,7 +125,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def find(name: String) = compiledFind(name).result.headOption
   }
 
-  case class ContractorSupplier(contractorId: Int, supplierId: Int) extends Entity
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")
     def supplierId = column[Int]("supplier_id")
