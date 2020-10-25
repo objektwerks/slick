@@ -24,7 +24,7 @@ object Peformance extends LazyLogging {
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 3)
-@Measurement(iterations = 9)
+@Measurement(iterations = 3)
 @Fork(1)
 class Performance() {
   import Peformance.repository._

@@ -8,4 +8,5 @@ Test
 
 Benchmark
 ---------
+>Currently JMH only works with JDK 8!
 1. sbt clean test jmh:run
