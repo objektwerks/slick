@@ -18,8 +18,8 @@ final case class Contractor(id: Int = 0,
                             role: String) extends Entity
 
 object Recurrence extends Enumeration {
-    type Recurrence = Value
-    val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
+  type Recurrence = Value
+  val once, weekly, biweekly, monthly, quarterly, semiannual, annual = Value
 }
 
 import Recurrence._
