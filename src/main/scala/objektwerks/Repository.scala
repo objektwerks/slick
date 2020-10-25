@@ -9,16 +9,24 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
+object Repository {
+  def apply(config: DatabaseConfig[JdbcProfile],
+            profile: JdbcProfile,
+            awaitDuration: Duration): Repository = new Repository(config, profile, awaitDuration)
+}
+
 /**
   * Customer 1 ---> * Contractor 1 ---> * Task
   * Contractor 1 ---> 1 Role
   * Task 1 ---> 1 Recurrence
   * Contractor * <---> * Supplier
   */
-class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfile, val awaitDuration: Duration) {
+class Repository(val config: DatabaseConfig[JdbcProfile],
+                 val profile: JdbcProfile,
+                 val awaitDuration: Duration) {
   import profile.api._
 
-  implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](l => Timestamp.valueOf(l), t => t.toLocalDateTime)
+  implicit val dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](ldt => Timestamp.valueOf(ldt), ts => ts.toLocalDateTime)
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
   val db = config.db
 
@@ -26,7 +34,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile], val profile: JdbcProfi
 
   def exec[T](action: DBIO[T]): Future[T] = db.run(action)
 
-  def closeRepository() = db.close()
+  def close() = db.close()
 
   def createSchema() = await(DBIO.seq(schema.create))
 

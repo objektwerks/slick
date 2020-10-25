@@ -1,6 +1,6 @@
 Slick
 -----
->This project tests Slick 3.3 features.
+>Project tests Slick features.
 
 Test
 ----

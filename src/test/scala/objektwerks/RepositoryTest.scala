@@ -16,21 +16,22 @@ import scala.language.postfixOps
 
 class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
   val config = DatabaseConfig.forConfig[JdbcProfile]("test", ConfigFactory.load("test.conf"))
-  val repository = new Repository(config, H2Profile, 1 second)
-  import repository._
+  val repository = Repository(config, H2Profile, 1 second)
 
   override protected def beforeAll(): Unit = {
-    schema.createStatements foreach println
-    schema.dropStatements foreach println
-    createSchema()
+    repository.schema.createStatements foreach println
+    repository.schema.dropStatements foreach println
+    repository.createSchema()
   }
 
   override protected def afterAll(): Unit = {
-    dropSchema()
-    closeRepository()
+    repository.dropSchema()
+    repository.close()
   }
 
   test("add > save") {
+    import repository._
+
     val georgeCustomerId = await(customers.save(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com"))).get
     val johnCustomerId = await(customers.save(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com"))).get
     georgeCustomerId shouldBe 1
@@ -58,6 +59,8 @@ class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("find > save") {
+    import repository._
+
     val george = await(customers.find("george")).get
     val john = await(customers.find("john")).get
     george.id shouldBe 1
@@ -84,6 +87,8 @@ class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("list") {
+    import repository._
+
     val customerList = await(customers.list())
     customerList.size shouldBe 2
 
