@@ -1,10 +1,10 @@
 package objektwerks
 
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
+
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 import org.openjdk.jmh.annotations._
 
@@ -23,8 +23,8 @@ object Peformance extends LazyLogging {
 @State(Scope.Thread)
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 3)
-@Measurement(iterations = 3)
+@Warmup(iterations = 10)
+@Measurement(iterations = 10)
 @Fork(1)
 class Performance() {
   import Peformance.repository._
