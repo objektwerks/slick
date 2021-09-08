@@ -1,3 +1,5 @@
+enablePlugins(JmhPlugin)
+
 name := "slick"
 organization := "objketwerks"
 version := "0.1-SNAPSHOT"
@@ -13,4 +15,3 @@ libraryDependencies ++= {
     "org.scalatest" %% "scalatest" % "3.2.9" % Test
   )
 }
-enablePlugins(JmhPlugin)
