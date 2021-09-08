@@ -1,6 +1,6 @@
 Slick
 -----
->Project tests Slick features.
+>Slick feature tests and performance benchmark.
 
 Test
 ----
