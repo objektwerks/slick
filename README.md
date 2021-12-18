@@ -10,6 +10,7 @@ Benchmark
 ---------
 >See Performance class for details.
 1. sbt jmh:run
+>**Warning** Using JDK17, throws: java.lang.ClassNotFoundException: java.sql.Timestamp
 
 Results
 -------
