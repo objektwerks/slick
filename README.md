@@ -1,6 +1,6 @@
 Slick
 -----
->Slick feature tests and performance benchmark.
+>Slick feature tests and performance benchmark using H2.
 
 Test
 ----
