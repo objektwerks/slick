@@ -11,7 +11,7 @@ libraryDependencies ++= {
     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
     "com.h2database" % "h2" % "2.2.220",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
-    "ch.qos.logback" % "logback-classic" % "1.4.8",
+    "ch.qos.logback" % "logback-classic" % "1.4.11",
     "org.scalatest" %% "scalatest" % "3.2.16" % Test
   )
 }
