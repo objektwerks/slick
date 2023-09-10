@@ -3,7 +3,7 @@ enablePlugins(JmhPlugin)
 name := "slick"
 organization := "objketwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "3.3.1-RC7"
+scalaVersion := "3.3.1"
 libraryDependencies ++= {
   val slickVersion = "3.5.0-M4"
   Seq(
