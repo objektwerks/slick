@@ -2,6 +2,10 @@ Slick
 -----
 >Slick feature tests and performance benchmark against H2 and Scala 3.
 
+Warning
+-------
+>Slick 3 is still a WIP. Switch back to Scala 2.13.12 and Slick 3.4.1 is you need working Slick code. :)
+
 Test
 ----
 1. sbt clean test
