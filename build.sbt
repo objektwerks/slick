@@ -3,9 +3,9 @@ enablePlugins(JmhPlugin)
 name := "slick"
 organization := "objketwerks"
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.13.12"
+scalaVersion := "3.3.1"
 libraryDependencies ++= {
-  val slickVersion = "3.4.1"
+  val slickVersion = "3.5.0-M4"
   Seq(
     "com.typesafe.slick" %% "slick" % slickVersion,
     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
@@ -15,3 +15,6 @@ libraryDependencies ++= {
     "org.scalatest" %% "scalatest" % "3.2.16" % Test
   )
 }
+scalacOptions ++= Seq(
+  "-Wunused:all"
+)
