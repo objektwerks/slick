@@ -4,7 +4,7 @@ Slick
 
 Warning
 -------
->Slick 3 is still a WIP. Switch back to Scala 2.13.12 and Slick 3.4.1 is you need working Slick code. :)
+>Slick support for Scala 3 is still a **WIP**. Switch back to Scala 2.13.12 and Slick 3.4.1 if you require working Slick code. :)
 
 Test
 ----
