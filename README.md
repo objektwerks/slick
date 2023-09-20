@@ -16,7 +16,11 @@ Benchmark
 ---------
 >See Performance class for details.
 1. sbt jmh:run
->**Warning** Using JDK17, throws: java.lang.ClassNotFoundException: java.sql.Timestamp
+>**Warning:** Using JDK9+, throws: java.lang.ClassNotFoundException: java.sql.ResultSet
+
+>**See:** [Benchmark compilation fails if java.sql.ResultSet is used #192](https://github.com/sbt/sbt-jmh/issues/192)
+
+>**Update:** Using JDK 21, throws: java.lang.ClassNotFoundException: javax.sql.DataSource
 
 Results
 -------
