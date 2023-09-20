@@ -1,6 +1,6 @@
 Slick
 -----
->Slick feature tests and performance benchmark against H2.
+>Slick feature tests and performance benchmark against H2 and Scala 3.
 
 Test
 ----
