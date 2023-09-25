@@ -14,23 +14,21 @@ import slick.jdbc.{H2Profile, JdbcProfile}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
+final class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers:
   val config = DatabaseConfig.forConfig[JdbcProfile]("test", ConfigFactory.load("test.conf"))
   val repository = Repository(config, H2Profile, 1 second)
 
-  override protected def beforeAll(): Unit = {
+  override protected def beforeAll(): Unit =
     repository.schema.createStatements foreach println
     repository.schema.dropStatements foreach println
     repository.createSchema()
-  }
 
-  override protected def afterAll(): Unit = {
+  override protected def afterAll(): Unit =
     repository.dropSchema()
     repository.close()
-  }
 
-  test("add > save") {
-    import repository._
+  test("add > save"):
+    import repository.*
 
     val georgeCustomerId = await(customers.save(Customer(name = "george", address = "1 Mount Vernon., Mount Vernon, VA 22121", phone = "17037802000", email = "gw@gov.com"))).get
     val johnCustomerId = await(customers.save(Customer(name = "john", address = "1 Farm Rd., Penn Hill, MA 02169", phone = "16177701175", email = "ja@gov.com"))).get
@@ -56,10 +54,9 @@ class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
     val lowesId = await(suppliers.save(Supplier(name = "lowe", address = "1 Lowes Way, Placida, FL 33949", phone = "19419874321", email = "lw@lw.com"))).get
     await(contractorsSuppliers.add(ContractorSupplier(barneyContractorId, homeDepotId)))
     await(contractorsSuppliers.add(ContractorSupplier(fredContractorId, lowesId)))
-  }
 
-  test("find > save") {
-    import repository._
+  test("find > save"):
+    import repository.*
 
     val george = await(customers.find("george")).get
     val john = await(customers.find("john")).get
@@ -84,10 +81,9 @@ class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
 
     await(suppliers.save(homeDepot.copy(name = "home depot")))
     await(suppliers.save(lowes.copy(name = "lowes")))
-  }
 
-  test("list") {
-    import repository._
+  test("list"):
+    import repository.*
 
     val customerList = await(customers.list())
     customerList.size shouldBe 2
@@ -118,5 +114,3 @@ class RepositoryTest extends AnyFunSuite with BeforeAndAfterAll with Matchers {
     val contractorsSuppliersList = await(contractorsSuppliers.listContractorsSuppliers())
     contractorsSuppliersList.size shouldBe 2
     contractorsSuppliersList foreach println
-  }
-}
