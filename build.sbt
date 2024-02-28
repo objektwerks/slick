@@ -12,7 +12,7 @@ libraryDependencies ++= {
     "com.h2database" % "h2" % "2.2.224",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
     "ch.qos.logback" % "logback-classic" % "1.5.0",
-    "org.scalatest" %% "scalatest" % "3.2.17" % Test
+    "org.scalatest" %% "scalatest" % "3.2.18" % Test
   )
 }
 scalacOptions ++= Seq(
