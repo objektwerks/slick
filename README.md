@@ -4,7 +4,9 @@ Slick
 
 Warning
 -------
->Slick support for Scala 3 is still a **WIP**. Switch back to Scala 2.13.13 and Slick 3.4.1 if you require working Slick code. :)
+>Slick support for Scala 3 is still a **WIP**, requiring significant code changes.
+
+>Switch back to Scala 2.13.13 and Slick 3.4.1 if you require working Slick code.
 
 Test
 ----
@@ -14,11 +16,6 @@ Benchmark
 ---------
 >See Performance class for details.
 1. sbt jmh:run
->**Warning:** Using JDK9+, throws: java.lang.ClassNotFoundException: java.sql.ResultSet
-
->**See:** [Benchmark compilation fails if java.sql.ResultSet is used #192](https://github.com/sbt/sbt-jmh/issues/192)
-
->**Update:** Using JDK 21 and sbt-jmh 46, throws: java.lang.ClassNotFoundException: javax.sql.Timestamp
 
 Results
 -------
