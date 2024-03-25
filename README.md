@@ -2,9 +2,9 @@ Slick
 -----
 >Slick feature tests and performance benchmark against H2 using Scala 3.
 
-Warning
--------
->Slick support for Scala 3 is still a **WIP**, requiring significant code changes.
+TODO
+----
+* Upgrade to Slick 3.5. Requires significant work!
 
 Test
 ----
