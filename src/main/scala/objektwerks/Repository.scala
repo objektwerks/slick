@@ -6,11 +6,10 @@ import scala.concurrent.duration._
 import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
 
-object Repository {
+object Repository:
   def apply(config: DatabaseConfig[JdbcProfile],
             profile: JdbcProfile,
             awaitDuration: Duration): Repository = new Repository(config, profile, awaitDuration)
-}
 
 /**
   * Customer 1 ---> * Contractor 1 ---> * Task
@@ -20,7 +19,7 @@ object Repository {
   */
 class Repository(val config: DatabaseConfig[JdbcProfile],
                  val profile: JdbcProfile,
-                 val awaitDuration: Duration) {
+                 val awaitDuration: Duration):
   import profile.api._
 
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
@@ -139,4 +138,3 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def add(contractorSupplier: ContractorSupplier) = this += contractorSupplier
     def listContractorsSuppliers() = compiledListContractorsSuppliers.result
   }
-}
