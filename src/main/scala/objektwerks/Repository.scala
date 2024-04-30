@@ -44,7 +44,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def * = (id, name, address, phone, email).<>(Customer.tupled, Customer.unapply)
   }
   object customers extends TableQuery(new Customers(_)) {
-    val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
+    val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
     val compiledList = Compiled { sortBy(_.name.asc) }
     val compiledListCustomersContractors = Compiled {
       for {
