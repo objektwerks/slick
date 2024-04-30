@@ -2,6 +2,10 @@ Slick
 -----
 >Slick feature tests and performance benchmark against H2 using Scala 3.
 
+Build
+-----
+1. sbt clean compile
+
 Test
 ----
 1. sbt clean test
