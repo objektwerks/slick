@@ -53,15 +53,14 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def list() = compiledList.result
     def listCustomersContractors() = compiledListCustomersContractors.result
 
-  class Roles(tag: Tag) extends Table[Role](tag, "roles") {
+  class Roles(tag: Tag) extends Table[Role](tag, "roles"):
     def name = column[String]("name", O.PrimaryKey)
     def * = (name).mapTo[Role]
-  }
-  object roles extends TableQuery(new Roles(_)) {
+
+  object roles extends TableQuery(new Roles(_)):
     val compiledList = Compiled { map(_.name).sortBy(_.asc) }
     def add(role: Role) = this += role
     def list() = compiledList.result
-  }
 
   class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
