@@ -78,8 +78,8 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
   object contractors extends TableQuery(new Contractors(_)) {
-    val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
-    val compiledList = Compiled { customerId: Rep[Int] => filter(_.id === customerId).sortBy(_.name.asc) }
+    val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
+    val compiledList = Compiled { ( customerId: Rep[Int] ) => filter(_.id === customerId).sortBy(_.name.asc) }
     val compiledListContractorsTasks = Compiled {
       for {
         c <- this
@@ -103,7 +103,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
   object tasks extends TableQuery(new Tasks(_)) {
-    val compiledList = Compiled { contractorId: Rep[Int] => filter(_.id === contractorId).sortBy(_.started.asc) }
+    val compiledList = Compiled { ( contractorId: Rep[Int] ) => filter(_.id === contractorId).sortBy(_.started.asc) }
     def save(task: Task) = (this returning this.map(_.id)).insertOrUpdate(task)
     def list(contractorId: Int) = compiledList(contractorId).result
   }
@@ -117,7 +117,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def * = (id, name, address, phone, email).<>(Supplier.tupled, Supplier.unapply)
   }
   object suppliers extends TableQuery(new Suppliers(_)) {
-    val compiledFind = Compiled { name: Rep[String] => filter(_.name === name) }
+    val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
     def save(supplier: Supplier) = (this returning this.map(_.id)).insertOrUpdate(supplier)
     def find(name: String) = compiledFind(name).result.headOption
   }
