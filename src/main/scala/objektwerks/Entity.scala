@@ -2,7 +2,7 @@ package objektwerks
 
 import java.time.LocalDateTime
 
-sealed trait Entity extends Product with Serializable
+sealed trait Entity
 
 final case class Customer(id: Int = 0,
                           name: String,
