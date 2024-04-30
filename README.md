@@ -2,10 +2,6 @@ Slick
 -----
 >Slick feature tests and performance benchmark against H2 using Scala 3.
 
-TODO
-----
-* Upgrade to Slick 3.5. Requires significant work!
-
 Test
 ----
 1. sbt clean test
