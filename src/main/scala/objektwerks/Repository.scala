@@ -122,7 +122,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")
     def supplierId = column[Int]("supplier_id")
-    def * = (contractorId, supplierId).<>(ContractorSupplier.tupled, ContractorSupplier.unapply)
+    def * = (contractorId, supplierId).mapTo[ContractorSupplier]
     def pk = primaryKey("pk", (contractorId, supplierId))
     def contractorFk = foreignKey("contractor_supplier_fk", contractorId, TableQuery[Contractors])(_.id)
     def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Suppliers])(_.id)
