@@ -3,11 +3,11 @@ package objektwerks
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
-import slick.basic.DatabaseConfig
-import slick.jdbc.JdbcProfile
-
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+
+import slick.basic.DatabaseConfig
+import slick.jdbc.JdbcProfile
 
 object Repository {
   def apply(config: DatabaseConfig[JdbcProfile],
