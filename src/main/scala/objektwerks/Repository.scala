@@ -113,15 +113,15 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def save(supplier: Supplier) = (this returning this.map(_.id)).insertOrUpdate(supplier)
     def find(name: String) = compiledFind(name).result.headOption
 
-  class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
+  class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers"):
     def contractorId = column[Int]("contractor_id")
     def supplierId = column[Int]("supplier_id")
     def * = (contractorId, supplierId).mapTo[ContractorSupplier]
     def pk = primaryKey("pk", (contractorId, supplierId))
     def contractorFk = foreignKey("contractor_supplier_fk", contractorId, TableQuery[Contractors])(_.id)
     def supplierFk = foreignKey("supplier_contractor_fk", supplierId, TableQuery[Suppliers])(_.id)
-  }
-  object contractorsSuppliers extends TableQuery(new ContractorsSuppliers(_)) {
+
+  object contractorsSuppliers extends TableQuery(new ContractorsSuppliers(_)):
     val compiledListContractorsSuppliers = Compiled {
       for {
         cs <- this
@@ -132,4 +132,3 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     }
     def add(contractorSupplier: ContractorSupplier) = this += contractorSupplier
     def listContractorsSuppliers() = compiledListContractorsSuppliers.result
-  }
