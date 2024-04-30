@@ -31,15 +31,15 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
   def createSchema() = await(DBIO.seq(schema.create))
   def dropSchema() = await(DBIO.seq(schema.drop))
 
-  class Customers(tag: Tag) extends Table[Customer](tag, "customers") {
+  class Customers(tag: Tag) extends Table[Customer](tag, "customers"):
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def address = column[String]("address")
     def phone = column[String]("phone")
     def email = column[String]("email")
     def * = (id.?, name, address, phone, email).mapTo[Customer]
-  }
-  object customers extends TableQuery(new Customers(_)) {
+
+  object customers extends TableQuery(new Customers(_)):
     val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
     val compiledList = Compiled { sortBy(_.name.asc) }
     val compiledListCustomersContractors = Compiled {
@@ -52,7 +52,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def find(name: String) = compiledFind(name).result.headOption
     def list() = compiledList.result
     def listCustomersContractors() = compiledListCustomersContractors.result
-  }
 
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
     def name = column[String]("name", O.PrimaryKey)
