@@ -100,19 +100,18 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def save(task: Task) = (this returning this.map(_.id)).insertOrUpdate(task)
     def list(contractorId: Int) = compiledList(contractorId).result
 
-  class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
+  class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers"):
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def address = column[String]("address")
     def phone = column[String]("phone")
     def email = column[String]("email")
     def * = (id.?, name, address, phone, email).mapTo[Supplier]
-  }
-  object suppliers extends TableQuery(new Suppliers(_)) {
+
+  object suppliers extends TableQuery(new Suppliers(_)):
     val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
     def save(supplier: Supplier) = (this returning this.map(_.id)).insertOrUpdate(supplier)
     def find(name: String) = compiledFind(name).result.headOption
-  }
 
   class ContractorsSuppliers(tag: Tag) extends Table[ContractorSupplier](tag, "contractors_suppliers") {
     def contractorId = column[Int]("contractor_id")
