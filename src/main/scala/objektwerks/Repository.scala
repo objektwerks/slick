@@ -111,7 +111,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def address = column[String]("address")
     def phone = column[String]("phone")
     def email = column[String]("email")
-    def * = (id, name, address, phone, email).<>(Supplier.tupled, Supplier.unapply)
+    def * = (id.?, name, address, phone, email).mapTo[Supplier]
   }
   object suppliers extends TableQuery(new Suppliers(_)) {
     val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
