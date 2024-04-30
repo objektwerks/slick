@@ -70,7 +70,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def customerId = column[Int]("customer_id")
     def name = column[String]("name", O.Unique)
     def role = column[String]("role")
-    def * = (id, customerId, name, role).<>(Contractor.tupled, Contractor.unapply)
+    def * = (id.?, customerId, name, role).mapTo[Contractor]
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.name)
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
   }
