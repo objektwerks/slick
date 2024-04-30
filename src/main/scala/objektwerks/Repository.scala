@@ -85,7 +85,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def list(customerId: Int) = compiledList(customerId).result
     def listContractorsTasks() = compiledListContractorsTasks.result
 
-  class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
+  class Tasks(tag: Tag) extends Table[Task](tag, "tasks"):
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def contractorId = column[Int]("contractor_id")
     def task = column[String]("task")
@@ -94,12 +94,11 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def completed = column[String]("completed")
     def * = (id.?, contractorId, task, recurrence, started, completed).mapTo[Task]
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
-  }
-  object tasks extends TableQuery(new Tasks(_)) {
+
+  object tasks extends TableQuery(new Tasks(_)):
     val compiledList = Compiled { ( contractorId: Rep[Int] ) => filter(_.id === contractorId).sortBy(_.started.asc) }
     def save(task: Task) = (this returning this.map(_.id)).insertOrUpdate(task)
     def list(contractorId: Int) = compiledList(contractorId).result
-  }
 
   class Suppliers(tag: Tag) extends Table[Supplier](tag, "suppliers") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
