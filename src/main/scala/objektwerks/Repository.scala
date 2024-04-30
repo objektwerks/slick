@@ -57,7 +57,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
 
   class Roles(tag: Tag) extends Table[Role](tag, "roles") {
     def name = column[String]("name", O.PrimaryKey)
-    def * = name.<>(Role.apply, Role.unapply)
+    def * = (name).mapTo[Role]
   }
   object roles extends TableQuery(new Roles(_)) {
     val compiledList = Compiled { map(_.name).sortBy(_.asc) }
