@@ -93,10 +93,10 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def contractorId = column[Int]("contractor_id")
     def task = column[String]("task")
-    def recurrence = column[Recurrence]("recurrence")
+    def recurrence = column[String]("recurrence")
     def started = column[String]("started")
     def completed = column[String]("completed")
-    def * = (id, contractorId, task, recurrence, started, completed).<>(Task.tupled, Task.unapply)
+    def * = (id.?, contractorId, task, recurrence, started, completed).mapTo[Task]
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
   object tasks extends TableQuery(new Tasks(_)) {
