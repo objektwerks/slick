@@ -1,8 +1,5 @@
 package objektwerks
 
-import java.sql.Timestamp
-import java.time.LocalDateTime
-
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
@@ -97,8 +94,8 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def contractorId = column[Int]("contractor_id")
     def task = column[String]("task")
     def recurrence = column[Recurrence]("recurrence")
-    def started = column[LocalDateTime]("started")
-    def completed = column[LocalDateTime]("completed")
+    def started = column[String]("started")
+    def completed = column[String]("completed")
     def * = (id, contractorId, task, recurrence, started, completed).<>(Task.tupled, Task.unapply)
     def contractorFk = foreignKey("contractor_fk", contractorId, TableQuery[Contractors])(_.id)
   }
