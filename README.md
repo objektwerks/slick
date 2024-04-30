@@ -13,7 +13,7 @@ Benchmark
 
 Results
 -------
->OpenJDK Runtime Environment (Zulu 8.56.0.23-CA-macos-aarch64) (build 1.8.0_302-b08)
+>OpenJDK Runtime Environment Zulu22.28+91-CA (build 22+36)
 1. addRole - 244.893
 2. listRoles - 34.638
 >Total time: 403 s (06:43), 10 warmups, 10 iterations, average time in microseconds, completed 2024.4.30
