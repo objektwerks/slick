@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit
 
 import org.openjdk.jmh.annotations._
 
-import slick.basic.DatabaseConfig
-import slick.jdbc.{H2Profile, JdbcProfile}
-
 import scala.concurrent.duration._
 import scala.language.postfixOps
+
+import slick.basic.DatabaseConfig
+import slick.jdbc.{H2Profile, JdbcProfile}
 
 object Peformance extends LazyLogging {
   val config = DatabaseConfig.forConfig[JdbcProfile]("app", ConfigFactory.load("app.conf"))
