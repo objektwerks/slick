@@ -25,10 +25,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
                  val profile: JdbcProfile,
                  val awaitDuration: Duration) {
   import profile.api._
-  import Recurrence._
 
-  given dateTimeMapper = MappedColumnType.base[LocalDateTime, Timestamp](ldt => Timestamp.valueOf(ldt), ts => ts.toLocalDateTime)
-  given recurrenceMapper = MappedColumnType.base[Recurrence, String](r => r.toString, s => Recurrence.withName(s))
   val schema = customers.schema ++ roles.schema ++ contractors.schema ++ tasks.schema ++ suppliers.schema ++ contractorsSuppliers.schema
   val db = config.db
 
