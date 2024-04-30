@@ -62,7 +62,7 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def add(role: Role) = this += role
     def list() = compiledList.result
 
-  class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors") {
+  class Contractors(tag: Tag) extends Table[Contractor](tag, "contractors"):
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def customerId = column[Int]("customer_id")
     def name = column[String]("name", O.Unique)
@@ -70,8 +70,8 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def * = (id.?, customerId, name, role).mapTo[Contractor]
     def roleFk = foreignKey("role_fk", role, TableQuery[Roles])(_.name)
     def customerFk = foreignKey("customer_fk", customerId, TableQuery[Customers])(_.id)
-  }
-  object contractors extends TableQuery(new Contractors(_)) {
+
+  object contractors extends TableQuery(new Contractors(_)):
     val compiledFind = Compiled { ( name: Rep[String] ) => filter(_.name === name) }
     val compiledList = Compiled { ( customerId: Rep[Int] ) => filter(_.id === customerId).sortBy(_.name.asc) }
     val compiledListContractorsTasks = Compiled {
@@ -84,7 +84,6 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
     def find(name: String) = compiledFind(name).result.headOption
     def list(customerId: Int) = compiledList(customerId).result
     def listContractorsTasks() = compiledListContractorsTasks.result
-  }
 
   class Tasks(tag: Tag) extends Table[Task](tag, "tasks") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
