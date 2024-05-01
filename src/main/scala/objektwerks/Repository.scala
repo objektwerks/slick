@@ -26,9 +26,13 @@ class Repository(val config: DatabaseConfig[JdbcProfile],
   val db = config.db
 
   def await[T](action: DBIO[T]): T = Await.result(db.run(action), awaitDuration)
+
   def exec[T](action: DBIO[T]): Future[T] = db.run(action)
+
   def close() = db.close()
+
   def createSchema() = await(DBIO.seq(schema.create))
+  
   def dropSchema() = await(DBIO.seq(schema.drop))
 
   class Customers(tag: Tag) extends Table[Customer](tag, "customers"):
