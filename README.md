@@ -2,6 +2,13 @@ Slick
 -----
 >Slick feature tests and performance benchmark against H2 using Scala 3.
 
+Relational Model
+----------------
+* Customer 1 ---> * Contractor 1 ---> * Task
+* Contractor 1 ---> 1 Role
+* Task 1 ---> 1 Recurrence
+* Contractor * <---> * Supplier
+
 Build
 -----
 1. sbt clean compile

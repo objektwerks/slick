@@ -11,12 +11,6 @@ object Repository:
             profile: JdbcProfile,
             awaitDuration: Duration): Repository = new Repository(config, profile, awaitDuration)
 
-/**
-  * Customer 1 ---> * Contractor 1 ---> * Task
-  * Contractor 1 ---> 1 Role
-  * Task 1 ---> 1 Recurrence
-  * Contractor * <---> * Supplier
-  */
 class Repository(val config: DatabaseConfig[JdbcProfile],
                  val profile: JdbcProfile,
                  val awaitDuration: Duration):
