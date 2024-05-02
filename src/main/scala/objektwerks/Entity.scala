@@ -9,6 +9,7 @@ object Entity:
   given Ordering[Role] = Ordering.by[Role, String](r => r.name)
   given Ordering[Contractor] = Ordering.by[Contractor, String](c => c.name)
   given Ordering[Task] = Ordering.by[Task, String](t => t.task)
+  given Ordering[Supplier] = Ordering.by[Supplier, String](s => s.name)
 
 final case class Customer(id: Int = 0,
                           name: String,
