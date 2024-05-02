@@ -6,6 +6,7 @@ sealed trait Entity
 
 object Entity:
   given Ordering[Customer] = Ordering.by[Customer, String](c => c.name)
+  given Ordering[Role] = Ordering.by[Role, String](r => r.name)
 
 final case class Customer(id: Int = 0,
                           name: String,
