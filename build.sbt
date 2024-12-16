@@ -5,7 +5,7 @@ organization := "objketwerks"
 version := "0.4-SNAPSHOT"
 scalaVersion := "3.6.3-RC1"
 libraryDependencies ++= {
-  val slickVersion = "3.5.1"
+  val slickVersion = "3.5.2"
   Seq(
     "com.typesafe.slick" %% "slick" % slickVersion,
     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
